@@ -1,0 +1,69 @@
+package bomberman.entities;
+
+import bombPrototype.BombTest;
+import bomberman.maingame.Game;
+
+public class Bomb extends Entity{
+	
+	/**
+	 * determines if a bomb is currently placed: <br>
+	 * <b>False:</b> bomb can be placed <br>
+	 * <b>True:</b> bomb can not be placed
+	 */
+	private boolean placedBomb = false;
+	
+	public long bombtime;
+	
+	/**
+	 * timer for how long it takes a bomb to detonate <br>
+	 * is set inside placeBomb() function
+	 */
+	private int bombTimer;
+
+	public Bomb(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+	}
+	
+	/**
+	 * method used for placing bombs, sets the bomb timer and permits placement of additional bombs till detonation
+	 */
+	public void placeBomb(Player player) {
+		//TODO spawn bomb use entity spawn method
+		if(!placedBomb) {
+			System.out.println("BOMB PLACED");
+			bombtime = System.nanoTime();
+			placedBomb=true;
+			bombTimer=120;
+			
+			int bombX = ((player.getX()+19)/60)*60;
+			int bombY = ((player.getY()+19)/60)*60;
+
+			player.addBomb(new BombTest(bombX,bombY,bombTimer,player));
+		}
+		//spawn(); //unimplemented
+	}
+	
+	/**
+	 * updates the bomb timer and detonates the bomb if 0 is reached
+	 */
+	public void updateBomb() {
+		
+		if(bombTimer<=0) {
+			bombTimer=0;
+			placedBomb=false;
+		} else {
+			bombTimer--;
+		}
+	}
+	
+	/**
+	 * BombStatus getter; returns whether a bomb can be placed or not
+	 * @return
+	 * <b>true</b> if the character has placed a bomb <br>
+	 * <b> false </b> if the character has not placed a bomb
+	 */
+	public boolean getBombStatus() {
+		return placedBomb;
+	}
+
+}

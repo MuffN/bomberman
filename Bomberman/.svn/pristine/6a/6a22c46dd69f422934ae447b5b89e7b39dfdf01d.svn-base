@@ -1,0 +1,141 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import bomberman.maingame.Game;
+
+
+/**
+ * Player class
+ * used to create players based on the character class
+ * @author Lukas Pruetzel
+ *
+ */
+public class Player extends Character{
+	
+	/**
+	 * contains the keys for moving, placing bombs and exiting the game
+	 */
+	private final int[] mapping;
+	
+	/**
+	 * previous X position in pixel (for debugging)
+	 */
+	private int lastX;
+	
+	/**
+	 * previous Y position in pixel (for debugging)
+	 */
+	private int lastY;
+	
+	/**
+	 * determines the previous bomb status for debugging
+	 */
+	private boolean lastBombStatus = false;
+	
+	/**
+	 * identifier for the player, should be 1 or 2
+	 */
+	
+	public Player (Game game, int[] mapping) {
+		super(game);
+		this.mapping = mapping;
+		this.setRectangle(new Rectangle(this.getX(), this.getY(), Character.CHARACTER_SIZE, Character.CHARACTER_SIZE));
+		
+		init();
+		//add the player object to the characterList (for bomb collision)
+		Character.characterList.add(this);
+	}
+	
+	/**
+	 * Temporary code for player initialization
+	 */
+	public void init() {
+		this.resetNextXY();
+	}
+	
+	/**
+	 * updates the player position and bomb status
+	 */
+	@Override
+	public void update() {
+		if(this.getMyBomb()!=null) {
+			//Decrease the bomb Timer, if the Bomb Timer returns false, the bomb should explode
+			if(!this.getMyBomb().decreaseTimer()) {
+				//Remove the bomb by setting it to null
+				this.setMyBomb(null);
+				this.setPlacedBomb(false);
+			}
+		}
+		
+		if(getGame().getKeyboardControl().keyDown(mapping[0]) ) {
+			up();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[1])) {
+			left();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[2])) {
+			down();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[3])) {
+			right();
+		}
+	
+		if (getGame().getKeyboardControl().keyDown(mapping[4])) {
+			int bombX = ((this.getX()+19)/60)*60;
+			int bombY = ((this.getY()+19)/60)*60;
+			placeBomb(bombX, bombY);
+		}
+		collisionMove(this.getRectangle());		
+	}
+	
+	/**
+	 * renders the player
+	 * @param graphics graphics object to be drawn with
+	 */
+	public void render(Graphics graphics) {
+		//Render the bomb if it exists
+		if(this.getMyBomb()!=null) {
+			this.getMyBomb().render(graphics);
+		}
+		graphics.drawImage(this.getImage(), getX(), getY(), null);
+	}
+	
+	/**
+	 * Position Getter
+	 * @return returns array containing X and Y position as integer
+	 */
+	public int[] getPosition(){
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+	
+	/**
+	 * Debugging method showing player position and bomb status
+	 */
+	public void printDebug() {
+		if(lastX != getX() || lastY != getY()) {
+			//System.out.println("====================");
+			//System.out.print("Player "+playerNumber+" is at:");
+			//System.out.print(" Left: ["+(this.getX()/60)+"/"+((this.getY()+19)/60)+"]");
+			//System.out.print(" Top: ["+((this.getX()+19)/60)+"/"+(this.getY()/60)+"]");
+			//System.out.print(" Right: ["+((this.getX()+39)/60)+"/"+((this.getY()+19)/60)+"]");
+			//System.out.println(" Down: ["+((this.getX()+19)/60)+"/"+((this.getY()+39)/60)+"]");
+
+			//lastX = getX();
+			//lastY = getY();
+		}
+		if(hasPlacedBomb() != lastBombStatus) {
+			lastBombStatus = hasPlacedBomb();
+			long bombtime2 = System.nanoTime();
+			double mytime = ((bombtime2-this.getBombTime())/10000)/100000.0;
+			if(hasPlacedBomb()==true) {
+				System.out.println("["+this.getCharacterNumber()+"] planted a Bomb");
+			} else {
+				System.out.println("["+this.getCharacterNumber()+"] Bomb removed ["+mytime+"sec]");
+			}
+		}
+	}
+}

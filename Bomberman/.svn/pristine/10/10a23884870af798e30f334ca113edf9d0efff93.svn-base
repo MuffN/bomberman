@@ -1,0 +1,45 @@
+package bomberman.tools;
+
+import java.awt.image.BufferedImage;
+
+public class Asset {
+	
+	public static BufferedImage debug, p1_debug, p2_debug;
+	public static BufferedImage player1, player2;
+	public static BufferedImage bot1, bot2, bot3;
+	public static BufferedImage nzg, zg, pfad, ground, ground_debug, ground_coords, zg_min, nzg_min, explosion;
+	public static BufferedImage bomb_debug;
+	private static boolean loaded = false;
+		
+	private Asset() {
+	}
+	
+	public static void loadAssets() {
+		if(!loaded) {
+			debug = GameImage.loadImage("debug.png");
+			player1 = GameImage.loadImage("nzg.png");
+			player2 = GameImage.loadImage("pfad.png");
+			bot1 = GameImage.loadImage("nzg.png");
+			bot2 = GameImage.loadImage("nzg.png");
+			bot3 = GameImage.loadImage("nzg.png");
+			nzg = GameImage.loadImage("nzg.png");
+			zg = GameImage.loadImage("zg.png");
+			pfad = GameImage.loadImage("pfad.png");
+			ground = GameImage.loadImage("ground.png");
+			explosion = GameImage.loadImage("explosion.png");
+			
+			
+			zg_min = GameImage.loadImage("zg_min.png");
+			nzg_min = GameImage.loadImage("nzg_min.png");
+			p1_debug = GameImage.loadImage("p1_debug.png");
+			p2_debug = GameImage.loadImage("p2_debug.png");
+			ground_debug = GameImage.loadImage("ground_debug.png");
+			ground_coords = GameImage.loadImage("ground_coords.png");
+			
+			bomb_debug = GameImage.loadImage("bomb_debug.png");
+			
+			loaded = true;
+		}
+	}
+
+}

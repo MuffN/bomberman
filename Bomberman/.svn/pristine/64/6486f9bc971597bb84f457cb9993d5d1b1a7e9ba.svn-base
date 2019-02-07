@@ -1,0 +1,42 @@
+package bomberman.tools;
+
+import java.awt.image.BufferedImage;
+
+public class Asset {
+	public static BufferedImage character1, character2, character3, character4;
+	public static BufferedImage cdeath1, cdeath2, cdeath3, cdeath4;
+	
+	public static BufferedImage ground_debug, ground_coords, zg_min, nzg_min, explosion;
+	public static BufferedImage bomb_debug;
+	private static boolean loaded = false;
+		
+	private Asset() {
+	}
+	
+	public static void loadAssets() {
+		if(!loaded) {
+			character1 = GameImage.loadImage("character1.png");
+			character2 = GameImage.loadImage("character2.png");
+			character3 = GameImage.loadImage("character3.png");
+			character4 = GameImage.loadImage("character4.png");
+			
+			cdeath1 = GameImage.loadImage("cdeath1.png");
+			cdeath2 = GameImage.loadImage("cdeath2.png");
+			cdeath3 = GameImage.loadImage("cdeath3.png");
+			cdeath4 = GameImage.loadImage("cdeath4.png");
+			
+			explosion = GameImage.loadImage("explosion.png");
+			
+			
+			zg_min = GameImage.loadImage("zg_min.png");
+			nzg_min = GameImage.loadImage("nzg_min.png");
+			ground_debug = GameImage.loadImage("ground_debug.png");
+			ground_coords = GameImage.loadImage("ground_coords.png");
+			
+			bomb_debug = GameImage.loadImage("bomb_debug.png");
+			
+			loaded = true;
+		}
+	}
+
+}

@@ -1,0 +1,103 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bomberman.maingame.Game;
+import bomberman.tools.Asset;
+
+public class Bot extends Character {
+
+	int move;
+	private Rectangle myRect;
+
+	public Bot(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+		myRect = new Rectangle(x, y, size, size);
+		init();
+	}
+
+	// BOT CODE HERE
+	@Override
+	public void update() {
+
+		myRect.setLocation(getNextX(), getNextY());
+		if (!this.checkNZGCollision(myRect)) {
+			this.move();
+		} else {
+			myRect.setLocation(getX(), getY());
+			resetNextXY();
+		}
+	}
+// 2 Player 1Bot
+	public Player nextEnemy(Player myPlayer, Player myPlayer2) {
+
+		int posBot = getX() + getY();
+		int distance1 = myPlayer.getX() + myPlayer.getY();
+		int distance2 = myPlayer2.getX() + myPlayer2.getY();
+		if (Math.abs(posBot - distance1) <= Math.abs(posBot - distance2)) {
+			return myPlayer;
+		} else
+			return myPlayer2;
+
+	}
+
+	public void moveToEnemy(Player enemy) {
+		int xEnemy = enemy.getX(), yEnemy = enemy.getY();
+		int x = getX(), y = getY();
+
+		if (x - xEnemy > 60) {
+			left();
+			if (this.checkNZGCollision(myRect)) {
+				if (y - yEnemy > 60) {
+					up();
+				}
+				if (y - yEnemy < -60) {
+					down();
+
+				}
+			}
+		} else if (x - xEnemy < -60) {
+			right();
+			if (this.checkNZGCollision(myRect)) {
+				if (y - yEnemy > 60) {
+					up();this.move();
+				}
+				if (y - yEnemy < -60) {
+					down();this.move();
+
+				}
+			}
+		} else if (y - yEnemy > 60) {
+			up();
+			if (this.checkNZGCollision(myRect)) {
+				if (x - xEnemy > 60) {
+					left();this.move();
+
+				} if (x - xEnemy < -60) {
+					right();this.move();
+				}
+
+			}
+		} else if (y - yEnemy < -60) {
+			down();
+			if (this.checkNZGCollision(myRect)) {
+				if (x - xEnemy > 60) {
+					left();this.move();
+
+				}  if (x - xEnemy < -60) {
+					right();this.move();
+				}
+
+			}
+		}
+	}
+
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.p2_debug, getX(), getY(), null);
+	}
+
+	public void init() {
+		this.resetNextXY();
+	}
+}

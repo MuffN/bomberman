@@ -1,0 +1,12 @@
+package bomberman.entities;
+
+import bomberman.prototype.Game;
+
+public class Bomb extends Entity{
+
+	public Bomb(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+		// TODO Auto-generated constructor stub
+	}
+
+}

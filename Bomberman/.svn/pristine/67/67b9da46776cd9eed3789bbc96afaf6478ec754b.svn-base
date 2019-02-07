@@ -1,0 +1,103 @@
+package bomberman.menu;
+
+import java.io.IOException;
+import java.io.Serializable;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+
+public class MasterController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+
+	private transient Scene StartScene;
+	private transient Scene PlayerScene;
+	private transient Scene SingleplayerBotScene;
+	private transient Scene MultiplayerBotScene;
+	private transient Scene GameScene;
+
+	private transient Stage gameStage;
+	
+	private transient static int numberOfPlayers;
+
+	private transient static MasterController instance;
+
+	public static MasterController getInstance() {
+		if (instance == null) {
+			instance = new MasterController();
+		}
+		return instance;
+	}
+
+	public static int getNumberOfPlayers() {
+		return numberOfPlayers;
+	}
+
+	public static void setNumberOfPlayers(int playernumbers) {
+		numberOfPlayers = playernumbers;
+	}
+
+	public static void initialize(Stage gameStage) {
+		buildScenes(gameStage);
+		getInstance().gameStage.setScene(getInstance().StartScene);
+		gameStage.show();
+
+	}
+
+	private static void buildScenes(Stage gameStage) {
+		getInstance().gameStage = gameStage;
+
+		try {
+
+			FXMLLoader startMenuLoader = new FXMLLoader(getInstance().getClass().getResource("StartMenu.fxml"));
+			Parent startMenuRoot = startMenuLoader.load();
+			gameStage.setTitle("DynaMine");
+			getInstance().StartScene = new Scene(startMenuRoot);
+
+			FXMLLoader playerMenuLoader = new FXMLLoader(getInstance().getClass().getResource("PlayerMenu.fxml"));
+			Parent playerMenuRoot = playerMenuLoader.load();
+			getInstance().PlayerScene = new Scene(playerMenuRoot);
+
+			FXMLLoader BotMenu1Loader = new FXMLLoader(getInstance().getClass().getResource("SingleplayerBotMenu.fxml"));
+			Parent botMenu1Root = BotMenu1Loader.load();
+			getInstance().SingleplayerBotScene = new Scene(botMenu1Root);
+			
+			FXMLLoader BotMenu2Loader = new FXMLLoader(getInstance().getClass().getResource("MultiplayerBotMenu.fxml"));
+			Parent botMenu2Root = BotMenu2Loader.load();
+			getInstance().MultiplayerBotScene = new Scene(botMenu2Root);
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void changeSceneToStartMenu() {
+		getInstance().gameStage.setScene(getInstance().StartScene);
+	}
+
+	public static void changeSceneToPlayerConfig() {
+		getInstance().gameStage.setScene(getInstance().PlayerScene);
+	}
+
+	public static void changeSceneToSingleplayerBotConfig() {
+		getInstance().gameStage.setScene(getInstance().SingleplayerBotScene);
+	}
+	
+	public static void changeSceneToMultiplayerBotConfig() {
+		getInstance().gameStage.setScene(getInstance().MultiplayerBotScene);
+	}
+	
+	public static void changeSceneToGame(){
+		getInstance().gameStage.setScene(getInstance().GameScene);
+	}
+
+}

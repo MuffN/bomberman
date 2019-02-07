@@ -1,0 +1,87 @@
+package bomberman.prototype;
+
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class Map extends JFrame{
+	//in Bearbeitung
+	
+private static final long serialVersionUID = 1L;
+
+static BufferedImage img;
+static int koordinate [][];
+private static Map a;
+private static int zaehler = 0;
+
+	
+	
+	
+	public Map(){
+		
+	setBounds(200, 200, 900, 780);
+	setLocationRelativeTo(null);
+	setResizable(false);
+	setTitle("Testdurchlauf");
+	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	setResizable(false);
+	
+	setLayout(new GridLayout(13, 15));
+	
+	int koordinate [][] = {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+							{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+							{1,0,1,2,1,0,1,0,1,2,1,0,1,0,1},
+							{1,0,0,2,2,2,0,2,0,2,0,0,0,0,1},
+							{1,2,1,0,1,2,1,0,1,2,1,0,1,2,1},
+							{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+							{1,2,1,0,1,0,1,0,1,0,1,0,1,2,1},
+							{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+							{1,2,1,2,1,2,1,0,1,2,1,2,1,2,1},
+							{1,0,0,2,0,2,0,2,0,2,2,2,0,0,1},
+							{1,0,1,2,1,2,1,0,1,2,1,0,1,0,1},
+							{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+							{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+	
+			for (int i=0; i<13; i++){
+				
+				for (int j=0; j<15; j++){
+					
+					if(koordinate[i][j] == 1){
+						ImageIcon nzg = new ImageIcon("/Users/Ebru/Desktop/Orkun/Bomberman/res/nzg.png");
+						JLabel l1 = new JLabel(nzg);
+						add(l1);
+					}
+					
+					if(koordinate[i][j] == 0){
+						ImageIcon pfad = new ImageIcon("/Users/Ebru/Desktop/Orkun/Bomberman/res/pfad.png");
+						JLabel l0 = new JLabel(pfad);
+						add(l0);
+						System.out.println(zaehler++);
+					
+					}
+					
+					if(koordinate[i][j] == 2){
+						ImageIcon zg = new ImageIcon("/Users/Ebru/Desktop/Orkun/Bomberman/res/zg.png");
+						JLabel l2 = new JLabel(zg);
+						add(l2);
+					}
+					
+				}
+			}
+
+}
+
+	
+	public static void main (String [] args){
+		
+		
+		a = new Map();
+		a.setVisible(true);
+	}
+	
+}

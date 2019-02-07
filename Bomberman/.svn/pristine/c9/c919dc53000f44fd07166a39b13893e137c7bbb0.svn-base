@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.collections.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+
+<!-- 
+@author Patrick Schneider
+-->
+
+<BorderPane maxHeight="780.0" maxWidth="900.0" minHeight="780.0"
+	minWidth="900.0" prefHeight="780.0" prefWidth="900.0"
+	xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="bomberman.menu.PlayerMenuController">
+	<top>
+	</top>
+	<center>
+		<ListView id="lv_PlayerMenu" fx:id="lv_PlayerMenu"
+			fixedCellSize="40.0" maxHeight="200.0" maxWidth="300.0" minHeight="200.0"
+			minWidth="300.0" mouseTransparent="true" onKeyPressed="#handleKey"
+			prefHeight="200.0" prefWidth="300.0" stylesheets="@menu.css"
+			xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+			<items>
+				<FXCollections fx:factory="observableArrayList">
+					<String fx:value="1 PLAYER" />
+					<String fx:value="2 PLAYER" />
+					<String fx:value="GO BACK" />
+					<String fx:value="QUIT GAME" />
+				</FXCollections>
+			</items>
+		</ListView>
+	</center>
+	<bottom>
+	</bottom>
+</BorderPane>
+
+

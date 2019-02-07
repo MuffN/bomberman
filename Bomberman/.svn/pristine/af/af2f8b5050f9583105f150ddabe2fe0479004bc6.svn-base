@@ -1,0 +1,119 @@
+package bomberman.menu;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import bomberman.maingame.Game;
+
+public class DynaMineGui extends JPanel{
+
+	/**
+	 * 
+	 * @author Patrick Schneider
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	static JPanel guiContainer;
+	private static StartMenu startmenu;
+	private static PlayerMenu playermenu;
+	private static SingleplayerBotmenu singleplayerbotmenu;
+	private static MultiplayerBotmenu multiplayerbotmenu;
+	
+	
+//	private transient CardLayout cl;
+	
+	public DynaMineGui() {
+		
+//		cl = new CardLayout();
+		guiContainer = new JPanel(new CardLayout());
+		startmenu = new StartMenu();		
+		playermenu = new PlayerMenu();
+		singleplayerbotmenu = new SingleplayerBotmenu();
+		multiplayerbotmenu = new MultiplayerBotmenu();
+		guiContainer.add(startmenu, "StartMenu");
+		guiContainer.add(playermenu, "PlayerMenu");
+		guiContainer.add(singleplayerbotmenu, "SingleplayerBotMenu");
+		guiContainer.add(multiplayerbotmenu, "MultiplayerBotMenu");
+//		startmenu.requestFocusInWindow();
+		
+		
+		
+		JFrame frame = new JFrame("DynaMine");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(guiContainer, BorderLayout.CENTER);
+		frame.pack();
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+	
+	public static void changeToNext(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.next(guiContainer);
+		guiContainer.requestFocusInWindow();
+		playermenu.setFocusFirst();
+		
+	}
+	
+	public static void changeToStart(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.show(guiContainer,"StartMenu");
+		guiContainer.requestFocusInWindow();
+		startmenu.setFocusFirst();
+	}
+	
+	public static void changeToPrevious(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.previous(guiContainer);
+		
+	}
+	
+	public static void changeToPlayerMenu(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.show(guiContainer,"PlayerMenu");
+//		guiContainer.requestFocusInWindow();
+//		guiContainer.transferFocus();
+		playermenu.setFocusFirst();
+	}
+	
+	public static void changeToSingleplayerBot(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.show(guiContainer,"SingleplayerBotMenu");
+//		guiContainer.requestFocusInWindow();
+//		guiContainer.transferFocus();
+		singleplayerbotmenu.setFocusFirst();
+	}
+	
+	public static void changeToMultiplayerBot(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.show(guiContainer,"MultiplayerBotMenu");
+//		guiContainer.transferFocus();
+		multiplayerbotmenu.setFocusFirst();
+	}
+		
+	public static void changeToGame(int amountOfPlayer, int amountOfBots){
+		Game myGame = new Game("DynaMine", 900, 780,amountOfPlayer,amountOfBots);
+		myGame.start();
+	}
+	
+	public static void changeToLast(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.last(guiContainer);
+		guiContainer.transferFocus();
+	}
+	
+//	public static void changeToSpecific(String specific){
+//		CardLayout cl = (CardLayout) guiContainer.getLayout();
+//		cl.show(guiContainer, specific);
+//		guiContainer.transferFocus();
+//	}
+	
+	public static void changeToExit(){
+		System.exit(0);
+	}
+	
+}

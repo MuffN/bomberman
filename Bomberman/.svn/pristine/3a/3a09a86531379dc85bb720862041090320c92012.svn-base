@@ -1,0 +1,64 @@
+package bomberman.entities;
+
+import bomberman.prototype.Game;
+
+public abstract class Entity {
+
+	//Entity coordinates
+	private int x, y;
+	
+	//Size of entity
+	private int size;
+	
+	//Game object
+	private Game game;
+	
+	public Entity(Game game, int x, int y, int size) {
+		this.game = game;
+		this.x = x;
+		this.y = y;
+		this.size = size;
+	}
+	
+	public void spawn() {
+		//TODO spawn object
+	}
+	
+	public void despawn() {
+		//TODO remove object
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	//Increment if var == 1 and decrement at var == -1
+	public void changeX(int var) {
+		if(var == 1) {
+			this.x +=2;
+		} else if (var == -1) {
+			this.x -=2;
+		}
+	}
+	
+	//Increment if var == 1 and decrement at var == -1
+	public void changeY(int var) {
+		if(var == 1) {
+			this.y +=2;
+		} else if (var == -1) {
+			this.y -=2;
+		}
+	}
+	
+	public Game getGame() {
+		return game;
+	}
+	
+	public int getSize() {
+		return size;
+	}
+}

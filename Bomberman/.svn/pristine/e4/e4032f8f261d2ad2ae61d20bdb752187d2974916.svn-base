@@ -1,0 +1,45 @@
+package bomberman.menu;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+
+/**
+ * 
+ * @author Patrick Schneider
+ * 
+ */
+public class PlayerMenu extends MenuPanel implements ActionListener{
+	private static final long serialVersionUID = 1L;
+	
+	private JButton[] playermenubuttons;
+	private static String[] buttonNames = {"1 PLAYER","2 PLAYER","GO BACK","QUIT GAME"};
+	
+	public PlayerMenu() {
+		
+		super(buttonNames);
+		playermenubuttons = super.getMenubuttons();
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if("1 PLAYER".equals(ae.getActionCommand())){
+			DynaMineGui.changeToSingleplayerBot();
+		}
+		if("2 PLAYER".equals(ae.getActionCommand())){
+			DynaMineGui.changeToMultiplayerBot();
+		}
+		if("GO BACK".equals(ae.getActionCommand())){
+			DynaMineGui.changeToStart();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+	}
+	
+	public void setFocusFirst(){
+		playermenubuttons[0].requestFocusInWindow();
+	}
+}

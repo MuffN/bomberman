@@ -1,0 +1,33 @@
+package bomberman.menu;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class DynaMineGui extends JPanel{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private transient CardLayout cl;
+	
+	public DynaMineGui() {
+		
+		cl = new CardLayout();
+		JPanel guiContainer = new JPanel(cl);
+		Startseite startseite = new Startseite();
+		guiContainer.add(startseite, "Startseite");
+		
+		
+		JFrame frame = new JFrame("DynaMine");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(guiContainer, BorderLayout.CENTER);
+		frame.pack();
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+}

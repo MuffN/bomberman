@@ -1,0 +1,49 @@
+package bomberman.maingame;
+
+import java.awt.event.KeyEvent;
+
+public class Settings {
+	
+	private Settings() {
+	}
+	
+	//Size of characters(in pixel - width & height)
+	public static final int CHARACTER_SIZE = 60;
+	
+	//Collision slide size
+	public static final int COLL_SLIDE = 55;
+	
+	//Speed of characters
+	public static int CHARACTER_SPEED = 6;
+	public static final int MIN_CHARACTER_SPEED = 6;
+	public static final int MAX_CHARACTER_SPEED = 10;
+	public static final int CHARACTER_SLIDE_SPEED = 6;
+	
+	//Where dead characters get moved to (next character is moved 60 pixel down)
+	public static int characterDeathPos = 0;
+	
+	//Keyboard mapping player 1
+	public static final int P1_UP = KeyEvent.VK_W;
+	public static final int P1_DOWN = KeyEvent.VK_S;
+	public static final int P1_LEFT = KeyEvent.VK_A;
+	public static final int P1_RIGHT = KeyEvent.VK_D;
+	public static final int P1_BOMB = KeyEvent.VK_SPACE;
+
+	public static final int[] keyboardMapping1 = { P1_UP, P1_LEFT, P1_DOWN, P1_RIGHT, P1_BOMB };
+	
+	//Keyboard mapping player 2
+	public static final int P2_UP = KeyEvent.VK_UP;
+	public static final int P2_DOWN = KeyEvent.VK_DOWN;
+	public static final int P2_LEFT = KeyEvent.VK_LEFT;
+	public static final int P2_RIGHT = KeyEvent.VK_RIGHT;
+	public static final int P2_BOMB = KeyEvent.VK_NUMPAD0;
+	
+	public static final int[] keyboardMapping2 = { P2_UP, P2_LEFT, P2_DOWN, P2_RIGHT, P2_BOMB };
+	
+	public static final int DEFAULT_BOMB_NUMBER = 2;
+	public static final int MIN_BOMB_NUMBER = 1;
+	public static final int DEFAULT_BOMB_RADIUS = 2;
+	public static final int MIN_BOMB_RADIUS = 2;
+	public static final int DEFAULT_BOMB_TIMER = 180; //Total lifetime of bomb (60 ticks = blast duration)
+
+}

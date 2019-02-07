@@ -1,0 +1,63 @@
+package bomberman.menu;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class DynaMineGui extends JPanel{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	static JPanel guiContainer;
+	
+//	private transient CardLayout cl;
+	
+	public DynaMineGui() {
+		
+//		cl = new CardLayout();
+		guiContainer = new JPanel(new CardLayout());
+		StartMenu startmenu = new StartMenu();
+		PlayerMenu playermenu = new PlayerMenu();
+		SingleplayerBotmenu singleplayerbotmenu = new SingleplayerBotmenu();
+		guiContainer.add(startmenu, "StartMenu");
+		guiContainer.add(playermenu, "PlayerMenu");
+		guiContainer.add(singleplayerbotmenu, "SingleplayerBotMenu");
+		
+		
+		JFrame frame = new JFrame("DynaMine");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.getContentPane().add(guiContainer, BorderLayout.CENTER);
+		frame.pack();
+		frame.setResizable(false);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+	}
+	
+	public static void changeToNext(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.next(guiContainer);
+		guiContainer.transferFocus();
+	}
+	
+	public static void changeToSingleBot(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.show(guiContainer,"SingleplayerBotMenu");
+		guiContainer.transferFocus();
+	}
+	
+	public static void changeToPrevious(){
+		CardLayout cl = (CardLayout) guiContainer.getLayout();
+		cl.previous(guiContainer);
+		guiContainer.transferFocus();
+	}
+	
+	public static void changeToLast(){
+		
+	}
+	
+}

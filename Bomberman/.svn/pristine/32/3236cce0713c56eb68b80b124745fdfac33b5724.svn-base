@@ -1,0 +1,149 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import bomberman.entities.MenuPanel;
+import bomberman.tools.Asset;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+public class Instructions extends MenuPanel implements ActionListener {
+
+private static final long serialVersionUID = 1L;
+	
+	private JButton[] instructionbutton;
+	private static String[] buttonNames = {"GO BACK"};
+	private JLabel firstplayerLabel;
+	private JLabel secondplayerLabel;
+	private JLabel movementLabel;
+	private JLabel placementLabel;
+	
+	
+	public Instructions() {
+		
+		firstplayerLabel = new JLabel("PLAYER 1");
+		secondplayerLabel = new JLabel("PLAYER 2");
+		movementLabel = new JLabel("MOVEMENT", SwingConstants.CENTER);
+		placementLabel = new JLabel("PLACING BOMB", SwingConstants.CENTER);
+		firstplayerLabel.setForeground(Color.WHITE);
+		secondplayerLabel.setForeground(Color.WHITE);
+		movementLabel.setForeground(Color.WHITE);
+		placementLabel.setForeground(Color.WHITE);
+//		firstplayerLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		firstplayerLabel.setBounds(85, 150, 300, 50);
+		firstplayerLabel.setFont(Asset.pcsenior.deriveFont(24f));
+//		secondplayerLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		secondplayerLabel.setBounds(620, 150, 300, 50);
+		secondplayerLabel.setFont(Asset.pcsenior.deriveFont(24f));
+//		movementLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		movementLabel.setBounds(250, 260, 400, 40);
+		movementLabel.setFont(Asset.pcsenior.deriveFont(20f));
+//		placementLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+		placementLabel.setBounds(250, 380, 400, 40);
+		placementLabel.setFont(Asset.pcsenior.deriveFont(20f));
+		instructionbutton = new JButton[buttonNames.length];
+		
+		
+		
+		
+		for(int i = 0; i < buttonNames.length; i++){
+
+			final int curButton = i;
+			
+			instructionbutton[i] = new JButton(buttonNames[i]);
+			instructionbutton[i].setFocusable(true);
+			instructionbutton[i].setMargin(new Insets(0, 0, 0, 0));
+			instructionbutton[i].setContentAreaFilled(false);
+			instructionbutton[i].setIcon(blackBackground);
+			instructionbutton[i].setOpaque(false);
+			instructionbutton[i].setForeground(Color.YELLOW);
+			instructionbutton[i].setHorizontalTextPosition(SwingConstants.CENTER);
+			instructionbutton[i].addActionListener(this);
+			instructionbutton[i].setActionCommand(buttonNames[i]);
+			instructionbutton[i].addKeyListener(new KeyAdapter(){
+				@Override
+				public void keyPressed(KeyEvent e){
+					switch (e.getKeyCode()){
+					case KeyEvent.VK_UP:
+						if(curButton > 0){
+							instructionbutton[curButton - 1].requestFocusInWindow();
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if(curButton < 0){
+							instructionbutton[curButton + 1].requestFocusInWindow();
+						}
+						break;
+					default:
+						break;
+					}
+					
+				}
+			});
+			instructionbutton[i].addFocusListener(new FocusListener() {
+
+		         @Override
+		         public void focusLost(FocusEvent arg0) {
+		        	instructionbutton[curButton].setForeground(Color.YELLOW);
+		            instructionbutton[curButton].setIcon(blackBackground);
+		         }
+
+		         @Override
+		         public void focusGained(FocusEvent arg0) {
+		        	 instructionbutton[curButton].setForeground(Color.RED);
+		            instructionbutton[curButton].setIcon(arrowBackground);
+		         }
+		      });
+			instructionbutton[i].setBorder(null);
+			instructionbutton[i].setBackground(Color.BLACK);
+			instructionbutton[i].setFocusPainted(false);
+			instructionbutton[i].setFont(Asset.pcsenior.deriveFont(20f));
+		}
+	
+		
+		instructionbutton[0].setBounds(250, 600, 400, 40);
+
+		instructionbutton[0].requestFocusInWindow();
+		
+		for (int j = 0; j < buttonNames.length; j++){
+			add(instructionbutton[j]);
+		}
+		add(firstplayerLabel);
+		add(secondplayerLabel);
+		add(movementLabel);
+		add(placementLabel);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if("GO BACK".equals(ae.getActionCommand())){
+			DynaMineGui.changeToStart();
+		}
+	}
+	
+	public void setFocusFirst(){
+		instructionbutton[0].requestFocusInWindow();
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.instructions, 0, 0, null);
+	}
+}

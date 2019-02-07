@@ -1,0 +1,33 @@
+package bombPrototype;
+
+import java.awt.Graphics;
+
+import bomberman.entities.Player;
+import bomberman.tools.Asset;
+
+public class BombTest {
+	
+	private int x,y,timer;
+	private Player player;
+	
+	public BombTest(int x, int y,int timer,Player player) {
+		this.x = x;
+		this.y = y;
+		this.timer = timer;
+		this.player = player;
+	}
+	
+	public boolean decreaseTimer() {
+		if(timer<=0) {
+			return false;
+		} else {
+			timer--;
+			return true;
+		}
+	}
+	
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.bomb_debug, x, y, null);
+	}
+
+}

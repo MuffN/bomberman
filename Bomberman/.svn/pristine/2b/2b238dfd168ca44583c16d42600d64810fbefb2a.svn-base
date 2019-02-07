@@ -1,0 +1,37 @@
+package bomberman.entities;
+
+import java.awt.Dimension;
+import java.awt.Graphics;
+
+import javax.swing.ImageIcon;
+import javax.swing.JPanel;
+
+import bomberman.tools.Asset;
+
+public class MenuPanel extends JPanel{
+	
+	/**
+	 * @author Patrick Schneider
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
+	protected ImageIcon blackBackground = new ImageIcon(Asset.button_background_blank);
+	protected ImageIcon arrowBackground = new ImageIcon(Asset.button_background_arrow);
+	
+	public MenuPanel(){
+		setSize(getPreferredSize());
+		setLayout(null);
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.menu_background_logo, 0, 0, null);
+	}
+}

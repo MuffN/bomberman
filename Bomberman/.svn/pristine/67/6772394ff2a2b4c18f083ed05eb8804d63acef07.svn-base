@@ -1,0 +1,110 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+public class PlayerMenu extends JPanel implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private JButton[] playermenubuttons;
+	private static String[] buttonNames = {"1 PLAYER","2 PLAYER","GO BACK","QUIT GAME"};
+	
+	
+	public PlayerMenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+		
+		playermenubuttons = new JButton[buttonNames.length];
+		for(int i = 0; i < buttonNames.length; i++){
+
+			final int curButton = i;
+			
+			playermenubuttons[i] = new JButton(buttonNames[i]);
+			playermenubuttons[i].addActionListener(this);
+			playermenubuttons[i].setActionCommand(buttonNames[i]);
+			playermenubuttons[i].addKeyListener(new KeyAdapter(){
+				@Override
+				public void keyPressed(KeyEvent e){
+					switch (e.getKeyCode()){
+					case KeyEvent.VK_UP:
+						if(curButton > 0){
+							playermenubuttons[curButton].setBackground(Color.BLACK);
+							playermenubuttons[curButton - 1].requestFocus();
+							playermenubuttons[curButton - 1].setBackground(Color.CYAN);
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if(curButton < 3){
+							playermenubuttons[curButton].setBackground(Color.BLACK);
+							playermenubuttons[curButton + 1].requestFocus();
+							playermenubuttons[curButton + 1].setBackground(Color.CYAN);
+						}
+						break;
+					default:
+						break;
+					}
+					
+				}
+			});
+			playermenubuttons[i].setBorder(null);
+			playermenubuttons[i].setBackground(Color.BLACK);
+			playermenubuttons[i].setFocusPainted(false);
+			playermenubuttons[i].setFont(new Font("Arial", Font.PLAIN, 24));
+		}
+		
+		playermenubuttons[0].setBounds(350, 390, 200, 40);
+		playermenubuttons[1].setBounds(350, 430, 200, 40);
+		playermenubuttons[2].setBounds(350, 470, 200, 40);
+		playermenubuttons[3].setBounds(350, 510, 200, 40);
+		
+		playermenubuttons[0].setBackground(Color.CYAN);
+		
+		for (int j = 0; j < buttonNames.length; j++){
+			add(playermenubuttons[j]);
+		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+//	private KeyListener enter = new KeyAdapter() {
+//		public void keyTyped(KeyEvent e){
+//			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+//				System.out.println("Enter wurde gedrückt");
+//			}
+//		}
+//	};
+
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if("1 PLAYER".equals(ae.getActionCommand())){
+			DynaMineGui.changeToSingleplayerBot();
+		}
+		if("2 PLAYER".equals(ae.getActionCommand())){
+			DynaMineGui.changeToMultiplayerBot();
+		}
+		if("GO BACK".equals(ae.getActionCommand())){
+			DynaMineGui.changeToPrevious();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+		
+	}
+}

@@ -1,0 +1,79 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+public class SingleplayerBotmenu extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private JButton[] singleplayerBotbuttons;
+	private static String[] buttonNames = {"1 BOT","2 BOTS","3 BOTS","GO BACK","QUIT GAME"};
+	
+	
+	public SingleplayerBotmenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+		
+		singleplayerBotbuttons = new JButton[buttonNames.length];
+		for(int i = 0; i < buttonNames.length; i++){
+
+			final int curButton = i;
+			
+			singleplayerBotbuttons[i] = new JButton(buttonNames[i]);
+			singleplayerBotbuttons[i].addKeyListener(enter);
+			singleplayerBotbuttons[i].addKeyListener(new KeyAdapter(){
+				@Override
+				public void keyPressed(KeyEvent e){
+					switch (e.getKeyCode()){
+					case KeyEvent.VK_UP:
+						if(curButton > 0) singleplayerBotbuttons[curButton - 1].requestFocus();
+						break;
+					case KeyEvent.VK_DOWN:
+						if(curButton < 3) singleplayerBotbuttons[curButton + 1].requestFocus();
+						break;
+					default:
+						break;
+					}
+					
+				}
+			});
+			singleplayerBotbuttons[i].setBorder(null);
+			singleplayerBotbuttons[i].setBackground(Color.BLACK);
+			singleplayerBotbuttons[i].setFont(new Font("Arial", Font.PLAIN, 24));
+		}
+		
+		singleplayerBotbuttons[0].setBounds(350, 390, 200, 40);
+		singleplayerBotbuttons[1].setBounds(350, 430, 200, 40);
+		singleplayerBotbuttons[2].setBounds(350, 470, 200, 40);
+		singleplayerBotbuttons[3].setBounds(350, 510, 200, 40);
+		singleplayerBotbuttons[4].setBounds(350, 550, 200, 40);
+		
+		for (int j = 0; j < buttonNames.length; j++){
+			add(singleplayerBotbuttons[j]);
+		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+	private KeyListener enter = new KeyAdapter() {
+		public void keyTyped(KeyEvent e){
+			if(e.getKeyChar() == KeyEvent.VK_ENTER) {
+				System.out.println("Enter wurde gedrückt");
+			}
+		}
+	};
+}

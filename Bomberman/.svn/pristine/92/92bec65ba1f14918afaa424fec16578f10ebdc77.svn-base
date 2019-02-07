@@ -1,0 +1,89 @@
+package bomberman.maingame;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import bomberman.tools.Asset;
+
+/**
+ * Map class
+ * stores all map relevant data
+ * such as borders and various kinds of scattered
+ * objects
+ * 
+ * @author Orkun Somali
+ *
+ */
+
+public class Map {
+	
+	private int x, y;
+	
+	private BufferedImage ground, pfad, nzg, zg;
+	
+	private int koordinate [][] =  {
+									{4,4,4,4,4,4,4,4,4,4,4,4,4,4,4},
+						   			{4,0,0,2,2,2,0,0,0,2,0,0,0,0,4},
+									{4,0,1,2,1,0,1,0,1,2,1,0,1,0,4},
+									{4,0,0,2,2,2,0,2,0,2,0,0,0,0,4},
+									{4,2,1,0,1,2,1,0,1,2,1,0,1,2,4},
+									{4,2,0,2,2,2,0,0,0,2,2,2,0,2,4},
+									{4,2,1,0,1,0,1,0,1,0,1,0,1,2,4},
+									{4,2,0,2,2,2,0,0,0,2,2,2,0,2,4},
+									{4,2,1,2,1,2,1,0,1,2,1,2,1,2,4},
+									{4,0,0,2,0,2,0,2,0,2,2,2,0,0,4},
+									{4,0,1,2,1,2,1,0,1,2,1,0,1,0,4},
+									{4,0,0,2,2,2,0,0,0,2,0,0,0,0,4},
+									{4,4,4,4,4,4,4,4,4,4,4,4,4,4,4}
+									};
+									
+	public Map(){	
+
+	}
+	
+
+	public void init(){
+		
+	}
+	
+		 
+	
+	public void renderGround(Graphics graphics){
+		
+		graphics.drawImage(ground, x, y, null);
+	}
+	
+	
+	
+	public void render(Graphics graphics) {
+	
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(Asset.nzg, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 2){
+					graphics.drawImage(Asset.zg, x, y, null);
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+		y=0;
+		x=0;
+	}
+	
+	public void update() {
+		//Hier werden dann Gegenstaende aus der Map entfernt
+	}
+}

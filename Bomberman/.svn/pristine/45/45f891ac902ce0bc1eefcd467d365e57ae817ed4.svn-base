@@ -1,0 +1,36 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+
+import bomberman.tools.Asset;
+
+public class Bomb {
+	
+	private int x,y,timer;
+	
+	public Bomb(int x, int y,int timer) {
+		this.x = x;
+		this.y = y;
+		this.timer = timer;
+	}
+	
+	public Bomb(int x, int y) {
+		this.x = x;
+		this.y = y;
+		this.timer=120;
+	}
+	
+	public boolean decreaseTimer() {
+		if(timer<=0) {
+			return false;
+		} else {
+			timer--;
+			return true;
+		}
+	}
+	
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.bomb_debug, x, y, null);
+	}
+
+}

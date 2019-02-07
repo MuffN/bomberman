@@ -1,0 +1,29 @@
+package bomberman.tools;
+
+import java.awt.image.BufferedImage;
+
+public class Asset {
+	
+	public static BufferedImage player1, player2;
+	public static BufferedImage bot1, bot2, bot3;
+	public static BufferedImage nzg, zg, pfad;
+	private static boolean loaded = false;
+		
+	private Asset() {
+	}
+	
+	public static void loadAssets() {
+		if(!loaded) {
+			player1 = GameImage.loadImage("nzg.png");
+			player2 = GameImage.loadImage("pfad.png");
+			bot1 = GameImage.loadImage("nzg.png");
+			bot2 = GameImage.loadImage("nzg.png");
+			bot3 = GameImage.loadImage("nzg.png");
+			nzg = GameImage.loadImage("nzg.png");
+			zg = GameImage.loadImage("zg.png");
+			pfad = GameImage.loadImage("pfad.png");
+			loaded = true;
+		}
+	}
+
+}

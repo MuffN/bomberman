@@ -1,0 +1,284 @@
+package bomberman.maingame;
+
+import bomberman.entities.Character;
+import bomberman.entities.Bomb;
+import bomberman.entities.Bot;
+import bomberman.entities.Player;
+import bomberman.input.KeyboardControl;
+import bomberman.menu.DynaMineGui;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.awt.event.KeyEvent;
+
+/**
+ * The main class for project bomberman all game related objects are registered
+ * in this class render() and update() methods of registered objects are
+ * executed inside the game render() and update() method of the game class
+ * 
+ * @author Lukas Pruetzel
+ * 
+ */
+
+public class Game implements Runnable {
+
+	private final boolean DEBUG = true;
+
+	private Player player1, player2;
+	private Bot bot1, bot2, bot3, bot4;
+	private boolean gameOver = false;
+	
+	private Bot[] botList = {bot1, bot2, bot3,bot4};
+
+	private KeyboardControl keyboard = new KeyboardControl(); // polling
+
+	private Map gameMap;
+
+	private Display gameDisplay;
+	private String title;
+	private int width, height;
+	private int numberOfPlayers, numberOfBots;
+
+	private boolean running = false;
+
+//	private Canvas canvas;
+	private BufferStrategy bufferStrat; // Amount of pictures to be buffered
+	private Graphics graphics; // Object to draw with
+
+	private Thread gameThread;
+
+	// Inspiration: http://www.koonsolo.com/news/dewitters-gameloop/
+	private final int FRAMES_PER_SECOND = 60; // FPS aimed at
+	private final double SKIP_TICKS = 1000000000 / FRAMES_PER_SECOND; // nanoseconds/FPS
+
+	/**
+	 * Game constructor, passes all variables into the Display constructor
+	 * 
+	 * @param title
+	 *            The title of the game window
+	 * @param width
+	 *            Width of the game in pixel
+	 * @param height
+	 *            Height of the game in pixel
+	 */
+	public Game(String title, int width, int height) {
+		KeyboardControl.lastPressedP1 = 0;
+		KeyboardControl.lastPressedP2 = 0;
+		this.width = width;
+		this.height = height;
+		this.title = title;
+		gameDisplay = new Display();
+		gameDisplay.getCanvas().setPreferredSize(gameDisplay.getPreferredSize());
+		gameDisplay.getCanvas().setFocusable(false);
+		gameDisplay.addKeyListener(keyboard);
+	}
+
+	// Game Loop consists of update() and render(), called in run() thread
+	// http://gameprogrammingpatterns.com/game-loop.html
+
+	/**
+	 * init() is called once at the start of the game thread in the run() method
+	 */
+	private void init() {
+		cleanUp();
+//		Asset.loadAssets();
+		gameMap = new Map();
+		player1 = new Player(keyboard);
+		if (numberOfPlayers > 1) {
+			player2 = new Player(keyboard);
+		}
+		
+		for(int i = 0; i<numberOfBots; i++) {
+			botList[i] = new Bot();
+		}
+		gameDisplay.requestFocusInWindow();
+		if (DEBUG) {
+			System.out.println(Arrays.toString(Character.characterList.toArray()));
+		}
+	}
+
+	/**
+	 * updates the status of all "attached" objects such as the keyboard,
+	 * various players (and bots) as well as map related information
+	 */
+	private void update() {
+		int i1 = Character.characterList.size();
+		int i2 = Character.characterToDelete.size();
+		keyboard.poll();
+		if(keyboard.keyDown(KeyEvent.VK_ESCAPE)) {
+			System.exit(0);
+			
+		}
+		if(i1==(i2+1) && !gameOver) {
+			List<Character> survivor = new ArrayList<Character>(Character.characterList);
+			survivor.removeAll(Character.characterToDelete);
+			Character lastCharacter = survivor.get(0);
+			System.out.println(survivor.get(0));
+			System.out.println("["+lastCharacter.getCharacterNumber() + "] - WON THE GAME");
+			gameOver = true;
+			DynaMineGui.changeToEndScreen(lastCharacter.getCharacterNumber(), numberOfPlayers);
+		}
+		
+		if(i1==i2 && !gameOver){
+			gameOver = true;
+			System.out.println("Both died");
+			DynaMineGui.changeToEndScreen(0, numberOfPlayers);
+		}
+		
+		for(Character c : Character.characterList) {
+			c.update();	
+		}
+	}
+
+	/**
+	 * renders all "attached" objects such as players (and bots) as well as the
+	 * map
+	 */
+	private void render() {
+		bufferStrat = gameDisplay.getCanvas().getBufferStrategy();
+		
+		if (bufferStrat == null) {
+			gameDisplay.getCanvas().createBufferStrategy(2);
+			return;
+		}
+		graphics = bufferStrat.getDrawGraphics();
+		
+		gameMap.render(graphics);
+//		gameMap.renderDebug(graphics);
+		for(Character c : Character.characterList) {
+			c.render(graphics);
+		}
+		// Show new changes
+		bufferStrat.show();
+		graphics.dispose();
+	}
+
+	/**
+	 * implemented function from runnable gets called when a thread is
+	 * initialized
+	 */
+	@Override
+	public void run() {
+		init();
+		// Debugging
+		long nanosecondsDebug = 0; // nanoseconds below 1 second
+		int frameCountDebug = 0; // ticks within a second (should be 60)
+		double deltaTime = 0;
+		long currentNanoTime = 0;
+		long lastNanoTime = 0;
+
+		lastNanoTime = System.nanoTime(); // Set NanoTime at init()
+
+		while (running) {
+			currentNanoTime = System.nanoTime(); // get current NanoTime
+
+			deltaTime += (currentNanoTime - lastNanoTime) / SKIP_TICKS;
+			nanosecondsDebug += currentNanoTime - lastNanoTime;
+			lastNanoTime = currentNanoTime; // set last to current for next loop
+
+			// DeltaTime >= if enough time divided by ticks skipped passed
+			// only update and render if thats the case
+			if (deltaTime >= 1) {
+				update();
+				render();
+				frameCountDebug++;
+				deltaTime--;
+
+			}
+			if (nanosecondsDebug >= 1000000000) {
+				if (DEBUG || frameCountDebug != FRAMES_PER_SECOND) {
+					System.out.println("Current FPS:" + frameCountDebug + " Target FPS: " + FRAMES_PER_SECOND + " " + gameThread);
+				}
+				frameCountDebug = 0;
+				nanosecondsDebug = 0;
+			}
+		}
+		stop();
+	}
+
+	// Start Thread starten; synchronized to avoid access problems
+	// http://www.straub.as/java/threads/synchronized.html
+
+	/**
+	 * initialized the thread if the game is not already running
+	 */
+	public synchronized void start() {
+		if (!running) {
+			running = true;
+
+			gameThread = new Thread(this);
+			gameThread.start();
+		} else {
+			return;
+		}
+	}
+
+	/**
+	 * stops the thread if the game is not already stopped
+	 */
+	public synchronized void stop() {
+		if (running) {
+			running = false;
+			try {
+				gameThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			return;
+		}
+	}
+	
+	public void setAmountOfParticipants(int numberOfPlayers, int numberOfBots){
+		this.numberOfPlayers = numberOfPlayers;
+		this.numberOfBots = numberOfBots;
+	}
+	
+	public Display getgameDisplay(){
+		return gameDisplay;
+	}
+
+	/**
+	 * returns the KeyboardControl class to access pressed keys
+	 * 
+	 * @return KeyboardControl class with pressed keys
+	 */
+	public  KeyboardControl getKeyboardControl() {
+		return this.keyboard;
+	}
+	
+	private void cleanUp() {
+		//Reset character conter and character related lists
+		Character.characterCounter = 1;
+		Character.characterList.clear();
+		Character.characterToDelete.clear();
+		Settings.characterDeathPos = 0;
+		Map.blastList.clear();
+		Map.item_blastUpList.clear();
+		Map.item_blastDownList.clear();
+		Map.nzgList.clear();
+		Map.zgList.clear();
+		Map.koordinateRandom = new int[][] {{6,1,1,1,1,1,1,1,1,1,1,1,1,1,7},
+										   {4,15,15,0,0,0,0,0,0,0,0,0,15,15,2},
+										   {4,15,9,0,9,0,9,0,9,0,9,0,9,15,2},
+										   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+										   {4,0,9,0,9,0,9,0,9,0,9,0,9,0,2},
+										   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+										   {4,0,9,0,9,0,9,0,9,0,9,0,9,0,2},
+										   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+										   {4,0,9,0,9,0,9,0,9,0,9,0,9,0,2},
+										   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,2},
+										   {4,15,9,0,9,0,9,0,9,0,9,0,9,15,2},
+										   {4,15,15,0,0,0,0,0,0,0,0,0,15,15,2},
+										   {5,3,3,3,3,3,3,3,3,3,3,3,3,3,8}};
+		Bomb.bombList.clear();
+		
+		//Clean last direction
+
+	
+		
+	}
+
+}

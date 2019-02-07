@@ -1,0 +1,92 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+
+import bomberman.maingame.Game;
+import bomberman.tools.Asset;
+
+public class Bot extends Character {
+
+	int move;
+
+	public Bot(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+	}
+
+	// BOT CODE HERE
+	@Override
+	public void update() {
+
+		// move=(int)(Math.random() * (3 - 0) + 0);
+		//
+		//
+		// switch(move) {
+		//
+		//
+		// case 0: up();break;
+		// case 1: down();break;
+		// case 2: right();break;
+		// case 3: left();break;
+		// default:break;
+		//
+		// }
+		//
+		// if (getX() <600 && getY() <=60 )
+		// {
+		// right();
+		// }
+		// if (getX() == 600 && getY()< 500)
+		// {
+		// down();
+		// }
+		// if (getX() <=600 && getY()==500 && getX()>100)
+		// {
+		// left();
+		// }
+		// if(getX() ==100 && getY() <=550)
+		// {
+		// up();
+		// }
+	}
+
+	public Player nextEnemy(Player myPlayer, Player myPlayer2) {
+		// int x = getX(), y = getY();
+		// int xP1 = myPlayer.getX(), yP1 = myPlayer.getY();
+		// int xP2 = myPlayer2.getX(), yP2 = myPlayer2.getY();
+
+		int posBot = getX() + getY();
+		int distance1 = myPlayer.getX() + myPlayer.getY();
+		int distance2 = myPlayer2.getX() + myPlayer2.getY();
+		if (Math.abs(posBot - distance1) <= Math.abs(posBot - distance2)) {
+			return myPlayer;
+		} else
+			return myPlayer2;
+
+	}
+
+	public void moveToEnemy(Player enemy) {
+		int xEnemy = enemy.getX(), yEnemy = enemy.getY();
+		int x = getX(), y = getY();
+		
+		if (x - xEnemy > 60) {
+			left();
+		}
+		else if (x - xEnemy < -60) {
+			right();
+		}
+		else		if(y- yEnemy >60)
+	{
+			up();
+		}
+		else 	if (y-yEnemy <-60)
+		{down();
+		}
+	}
+
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.bot1, getX(), getY(), null);
+	}
+
+	public void init() {
+	}
+}

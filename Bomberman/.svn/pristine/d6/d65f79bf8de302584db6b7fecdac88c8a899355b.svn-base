@@ -1,0 +1,98 @@
+package bomberman.prototype;
+
+import java.awt.Graphics;
+
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+
+import javax.imageio.ImageIO;
+
+
+
+public class Map {
+	
+	
+	private int x, y;
+	
+	
+	
+	//in Bearbeitung	
+	
+	private int koordinate [][] =  {
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+						   			{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,0,1,2,1,0,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,2,0,2,0,0,0,0,1},
+									{1,2,1,0,1,2,1,0,1,2,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,0,1,0,1,0,1,0,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,2,1,2,1,0,1,2,1,2,1,2,1},
+									{1,0,0,2,0,2,0,2,0,2,2,2,0,0,1},
+									{1,0,1,2,1,2,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+									};
+									
+	
+	private BufferedImage nzg, zg, pfad;
+	
+	public Map(){	
+
+	}
+	
+	public void init() {
+		
+		//Hier wird die karte gezeichnet
+		
+		//-TESTCODE IMAGES (hinterlegt die Bilder unter den Variablennamen)
+		try {
+			nzg = ImageIO.read(Map.class.getResource("/images/nzg.png"));
+			zg = ImageIO.read(Map.class.getResource("/images/zg.png"));
+			pfad = ImageIO.read(Map.class.getResource("/images/pfad.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+	}
+	
+	public void update() {
+		//Hier werden dann gegenst�nde aus der Map entfernt
+	}
+	
+	public void render(Graphics graphics) {
+		//nur Beispiel, erster Parameter sagt welches Bild gezeichnet wird
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(nzg, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 0){
+					graphics.drawImage(pfad, x, y, null);
+				
+				}
+				
+				if(koordinate[i][j] == 2){
+					graphics.drawImage(zg, x, y, null);
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+		y=0;
+		x=0;
+	}
+}

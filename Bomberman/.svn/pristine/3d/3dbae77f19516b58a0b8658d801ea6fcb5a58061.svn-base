@@ -1,0 +1,43 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bomberman.maingame.Map;
+import bomberman.tools.Asset;
+
+public class Bomb {
+	
+	private int x,y,timer;
+	private Rectangle bombRect=null;
+	
+	public Bomb(int x, int y) {
+		this.x = x;
+		this.y = y;
+		this.timer=120;
+		bombRect = new Rectangle(x, y, 60, 60);
+		this.init();
+	}
+	
+	public Rectangle getBombRect() {
+		return bombRect;
+	}
+	
+	public void init(){
+		Map.bombList.add(bombRect);
+	}
+	
+	public boolean decreaseTimer() {
+		if(timer<=0) {
+			Map.bombList.remove(bombRect);
+			return false;
+		} else {
+			timer--;
+			return true;
+		}
+	}
+	
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.bomb_debug, x, y, null);
+	}
+}

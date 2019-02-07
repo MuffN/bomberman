@@ -1,0 +1,59 @@
+package bomberman.menu;
+
+import bomberman.maingame.Game;
+import bomberman.maingame.Launcher;
+import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+
+public class MultiplayerBotMenuController {
+
+	private Game myGame;
+
+	@FXML
+	private ListView<String> lv_MultiplayerBotMenu;
+
+	@FXML
+	public void initialize() {
+		lv_MultiplayerBotMenu.getSelectionModel().selectFirst();
+	}
+
+	public void handleKeyReleased(KeyEvent ke) {
+		if (ke.getCode() == KeyCode.ENTER) {
+			switch (lv_MultiplayerBotMenu.getSelectionModel().getSelectedItem()) {
+			case "WITHOUT BOTS":
+				this.myGame = new Game("DynaMine", Launcher.gameWidth, Launcher.gameHeight,MasterController.getNumberOfPlayers(),0);
+				myGame.start();
+				break;
+			case "1 BOT":
+				this.myGame = new Game("DynaMine", Launcher.gameWidth, Launcher.gameHeight,MasterController.getNumberOfPlayers(),1);
+				myGame.start();
+				break;
+
+			case "2 BOTS":
+				this.myGame = new Game("DynaMine", Launcher.gameWidth, Launcher.gameHeight,MasterController.getNumberOfPlayers(),2);
+				myGame.start();
+				break;
+
+			case "GO BACK":
+				MasterController.changeSceneToPlayerConfig();
+				break;
+
+			case "QUIT GAME":
+				System.exit(0);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+}

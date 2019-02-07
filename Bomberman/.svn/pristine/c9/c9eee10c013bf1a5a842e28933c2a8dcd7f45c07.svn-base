@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+
+<BorderPane fx:id="mainPane" maxHeight="780.0" maxWidth="900.0"
+	minHeight="780.0" minWidth="900.0" prefHeight="780.0" prefWidth="900.0"
+	xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+	<top>
+	</top>
+	<center>
+		<Pane id="mainGUICenter" fx:id="mainGUICenter" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+		</Pane>
+	</center>
+	<bottom>
+	</bottom>
+</BorderPane>

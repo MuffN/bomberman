@@ -1,0 +1,49 @@
+package bomberman.menu;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+
+public class StartMenuController {
+
+	@FXML
+	private ListView<String> lv_StartMenu;
+
+	@FXML
+	public void initialize() {
+
+		lv_StartMenu.getSelectionModel().selectFirst();
+	}
+
+	@FXML
+	public void handleKeyReleased(KeyEvent ke) {
+		if (ke.getCode() == KeyCode.ENTER) {
+			switch (lv_StartMenu.getSelectionModel().getSelectedItem()) {
+			case "START":
+				MasterController.changeSceneToPlayerConfig();
+				break;
+
+			case "INSTRUCTIONS":
+				break;
+
+			case "CREDITS":
+				break;
+
+			case "QUIT GAME":
+				System.exit(0);
+				break;
+
+			default:
+				break;
+			}
+		}
+	}
+
+}

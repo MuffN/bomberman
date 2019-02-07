@@ -1,0 +1,133 @@
+//Quelle: https://www.gamedev.net/articles/programming/general-and-gameplay-programming/java-games-keyboard-and-mouse-r2439/
+//Eigene Integration ins Spiel
+
+/**
+ * Gedanke: Wir sollten KeyboardControl umschreiben
+ * um lediglich die letzte Eingabe zu akzeptieren
+ * 
+ * Vereinfacht spaeter Kollision Detection da immer in eine Himmelsrichtung gelaufen wird
+ */
+package bomberman.input;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import bomberman.maingame.Settings;
+
+public class KeyboardControl implements KeyListener {
+
+	private static final int KEY_COUNT = 256;
+	public static int lastPressedP1;
+	public static int lastPressedP2;
+
+	private enum KeyState {
+		RELEASED, // Not down
+		PRESSED, // Down, but not the first time
+		ONCE // Down for the first time
+	}
+
+	// Current state of the keyboard
+	private boolean[] currentKeys = null;
+
+	// Polled keyboard state
+	private KeyState[] keys = null;
+
+	public KeyboardControl() {
+		currentKeys = new boolean[KEY_COUNT];
+		keys = new KeyState[KEY_COUNT];
+		for (int i = 0; i < KEY_COUNT; ++i) {
+			keys[i] = KeyState.RELEASED;
+		}
+	}
+
+	public synchronized void poll() {
+		for (int i = 0; i < KEY_COUNT; ++i) {
+			// Set the key state
+			if (currentKeys[i]) {
+				// If the key is down now, but was not
+				// down last frame, set it to ONCE,
+				// otherwise, set it to PRESSED
+				if (keys[i] == KeyState.RELEASED)
+					keys[i] = KeyState.ONCE;
+				else
+					keys[i] = KeyState.PRESSED;
+			} else {
+				keys[i] = KeyState.RELEASED;
+			}
+		}
+		resetDirection();
+	}
+
+	public boolean keyDown(int keyCode) {
+		return keys[keyCode] == KeyState.ONCE || keys[keyCode] == KeyState.PRESSED;
+	}
+
+	public boolean keyDownOnce(int keyCode) {
+		return keys[keyCode] == KeyState.ONCE;
+	}
+
+	public synchronized void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if (keyCode >= 0 && keyCode < KEY_COUNT) {
+			for(int key : Settings.keyboardMapping1) {
+				if(keyCode == key) {
+					KeyboardControl.lastPressedP1 = keyCode;
+				}
+			}
+			for(int key : Settings.keyboardMapping2) {
+				if(keyCode == key) {
+					KeyboardControl.lastPressedP2 = keyCode;
+				}
+			}
+			currentKeys[keyCode] = true;
+		}
+	}
+
+	public synchronized void keyReleased(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		if(keyCode == KeyboardControl.lastPressedP1 ) {
+			KeyboardControl.lastPressedP1 = 0;
+		}
+		if(keyCode == KeyboardControl.lastPressedP2 ) {
+			KeyboardControl.lastPressedP2 = 0;
+		}
+		
+		if (keyCode >= 0 && keyCode < KEY_COUNT) {
+			currentKeys[keyCode] = false;
+		}
+	}
+
+	public void keyTyped(KeyEvent e) {
+		// Not needed
+	}
+	
+	public boolean oneDirection(int[] keyboardMapping) {
+		int p1Keys = 0;
+		for(int i = 0; i<4; i++) {
+			p1Keys += (this.keyDown(keyboardMapping[i])) ? 1 : 0;
+		}
+		if(p1Keys == 1) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	public void resetDirection() {
+		if(this.oneDirection(Settings.keyboardMapping1)) {
+			for(int i = 0; i<4; i++) {
+				if(this.keyDown(Settings.keyboardMapping1[i])) {
+					KeyboardControl.lastPressedP1 = Settings.keyboardMapping1[i];
+					break;
+				}
+			}
+		}
+		if(this.oneDirection(Settings.keyboardMapping2)) {
+			for(int i = 0; i<4; i++) {
+				if(this.keyDown(Settings.keyboardMapping2[i])) {
+					KeyboardControl.lastPressedP2 = Settings.keyboardMapping2[i];
+					break;
+				}
+			}
+		}
+	}
+}

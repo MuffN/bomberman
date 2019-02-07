@@ -1,0 +1,174 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+
+import bomberman.maingame.Game;
+
+/**
+ * Player class
+ * used to create players based on the character class
+ * @author Lukas Pruetzel
+ *
+ */
+public class Player extends Character{
+	
+	/**
+	 * contains the keys for moving, placing bombs and exiting the game
+	 */
+	private final int[] mapping;
+	
+	/**
+	 * previous X position in pixel (for debugging)
+	 */
+	private int lastX;
+	
+	/**
+	 * previous Y position in pixel (for debugging)
+	 */
+	private int lastY;
+	
+	/**
+	 * determines the previous bomb status for debugging
+	 */
+	private boolean lastBombStatus = false;
+	
+	/**
+	 * identifier for the player, should be 1 or 2
+	 */
+	private int playerNumber;
+	
+	private BufferedImage playerImg;
+	
+	private Rectangle myRect;
+	
+	Bomb myBomb;
+	
+	
+	public Player (Game game, int x, int y, int[] mapping, int playerSize, int playerNumber, BufferedImage playerImg) {
+		super(game, x, y, playerSize);
+		this.mapping = mapping;
+		this.playerNumber = playerNumber;
+		this.playerImg = playerImg;
+		myBomb = new Bomb(game, 0, 0, 0); //spawn not implemented
+		myRect = new Rectangle(x,y, playerSize, playerSize);
+		init();
+	}
+	
+	/**
+	 * Temporary code for player initialization
+	 */
+	public void init() {
+		this.resetNextXY();
+	}
+	
+	/**
+	 * updates the player position and bomb status
+	 */
+	@Override
+	public void update() {
+		
+		myBomb.updateBomb();
+		
+		if(getGame().getKeyboardControl().keyDown(mapping[0]) ) {
+			up();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[1])) {
+			left();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[2])) {
+			down();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[3])) {
+			right();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[4])) {
+			//Exit game with ESC
+			System.exit(0);
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[5])) {
+			myBomb.placeBomb();
+		}
+		myRect.setLocation(getNextX(), getNextY());
+		if(!this.checkNZGCollision(myRect)) {
+			this.move();
+		} else {
+			myRect.setLocation(getX(), getY());
+			resetNextXY();
+		}
+		
+	}
+	
+	/**
+	 * renders the player
+	 * @param graphics graphics object to be drawn with
+	 */
+	public void render(Graphics graphics) {
+		graphics.drawImage(playerImg, getX(), getY(), null);
+	}
+	
+	/**
+	 * Position Getter
+	 * @return returns array containing X and Y position as integer
+	 */
+	public int[] getPosition(){
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+	
+	/**
+	 * Debugging method showing player position and bomb status
+	 */
+	public void printDebug() {
+		if(lastX != getX() || lastY != getY()) {
+			
+			Integer field1X = this.getX()/60;
+			Integer field1Y = (this.getY()+19)/60;
+			
+			Integer field2X = (this.getX()+19)/60;
+			Integer field2Y = this.getY()/60;
+			
+			Integer field3X = (this.getX()+39)/60;
+			Integer field3Y = (this.getY()+19)/60;
+			
+			Integer field4X = (this.getX()+19)/60;
+			Integer field4Y = (this.getY()+39)/60;
+			/*
+			System.out.println("========================================");
+			System.out.println("["+playerNumber+"] Top Left: ["+this.getX()+"/"+this.getY()+"]");
+			System.out.println();
+			System.out.println("["+playerNumber+"] Left: ["+this.getX()+"/"+(this.getY()+20)+"]");
+			System.out.println("["+playerNumber+"] Top: ["+(this.getX()+20)+"/"+this.getY()+"]");
+			System.out.println("["+playerNumber+"] Right: ["+(this.getX()+40)+"/"+(this.getY()+20)+")");
+			System.out.println("["+playerNumber+"] Down: ["+(this.getX()+20)+"/"+(this.getY()+40)+")");
+			*/
+			System.out.println("====================");
+			
+			System.out.print("Player "+playerNumber+" is at:");
+			System.out.print(" Left: ["+field1X+"/"+field1Y+"]");
+			System.out.print(" Top: ["+field2X+"/"+field2Y+"]");
+			System.out.print(" Right: ["+field3X+"/"+field3Y+"]");
+			System.out.println(" Down: ["+field4X+"/"+field4Y+"]");
+
+			lastX = getX();
+			lastY = getY();
+		}
+		if(myBomb.getBombStatus() != lastBombStatus) {
+			lastBombStatus = myBomb.getBombStatus();
+			long bombtime2 = System.nanoTime();
+			double mytime = ((bombtime2-myBomb.bombtime)/10000)/100000.0;
+			if(myBomb.getBombStatus()==true) {
+				System.out.println("["+playerNumber+"] planted a Bomb");
+			} else {
+				System.out.println("["+playerNumber+"] Bomb exploded ["+mytime+"sec]");
+			}
+		}
+	}
+	
+	public Rectangle getRectangle() {
+		return myRect;
+	}
+}

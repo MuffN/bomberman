@@ -1,0 +1,160 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import bomberman.maingame.Game;
+
+/**
+ * The entity class is the parent class
+ * of all items and objects inside the game
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+public abstract class Entity {
+
+	private int x,y;
+	private int nextY, nextX;
+	private BufferedImage img;
+	
+	/**
+	 * Size of an entity
+	 */
+	private int size;
+	
+	/**
+	 * The game object using these entities
+	 */
+	private Game game;
+	
+	private final int CHARACTER_SPEED = 4;
+	
+	/**
+	 * Entity constructor
+	 * @param game game object
+	 * @param x X-coordinate of an entity in pixels
+	 * @param y Y-coordinate of an entity in pixels
+	 * @param size Size of an entity in pixels
+	 */
+	public Entity(Game game, int x, int y, int size, BufferedImage img) {
+		this.game = game;
+		this.x = x;
+		this.y = y;
+		this.size = size;
+		this.img = img;
+	}
+	
+	/**
+	 * Unimplemented; used to spawn entities
+	 */
+	public void spawn() {
+		//TODO spawn object
+	}
+	
+	/**
+	 * Unimplemented; used to despawn / remove entities
+	 */
+	
+	public void despawn() {
+		//TODO remove object
+	}
+	
+	/**
+	 * X getter
+	 * @return X-Coordinate of an entity
+	 */
+	public int getX() {
+		return x;
+	}
+	
+	/**
+	 * Y getter
+	 * @return Y-Coordinate of an entity
+	 */
+	public int getY() {
+		return y;
+	}
+	
+	public void setX(int x) {
+		this.x=x;
+	}
+	public void setY(int y) {
+		this.y=y;
+	}
+	
+	/**
+	 * Used to manipulate the X-Coordinate of an entity
+	 * @param var <br>
+	 * 		<b>1</b>: increase the X-Coordinate <br>
+	 * 		<b>2</b>: decrease the X-Coordinate
+	 */
+	//Increment if var == 1 and decrement at var == -1
+	public void changeX(int var) {
+		if(var == 1) {
+			this.nextX +=CHARACTER_SPEED;
+		} else if (var == -1) {
+			this.nextX -=CHARACTER_SPEED;
+		}
+	}
+	
+	/**
+	 * Used to manipulate the Y-Coordinate of an entity
+	 * @param var <br>
+	 * 		<b>1</b>: increase the Y-Coordinate <br>
+	 * 		<b>2</b>: decrease the Y-Coordinate
+	 */
+	//Increment if var == 1 and decrement at var == -1
+	public void changeY(int var) {
+		if(var == 1) {
+			this.nextY +=CHARACTER_SPEED;
+		} else if (var == -1) {
+			this.nextY -=CHARACTER_SPEED;
+		}
+	}
+	
+	/**
+	 * Game object getter
+	 * @return returns the game object
+	 */
+	public Game getGame() {
+		return game;
+	}
+	
+	/**
+	 * Size getter
+	 * @return returns the entities size
+	 */
+	public int getSize() {
+		return size;
+	}
+	
+	public int getNextX() {
+		return nextX;
+	}
+	
+	public int getNextY() {
+		return nextY;
+	}
+	
+	public void move() {
+		x = nextX;
+		y = nextY;
+	}
+	
+	public void resetNextXY() {
+		nextX=x;
+		nextY=y;
+	}
+	public abstract void update();
+
+	public abstract void render(Graphics graphics);
+	
+	public void setImage(BufferedImage img) {
+		this.img = img;
+	}
+	
+	public BufferedImage getImage() {
+		return img;
+	}
+}

@@ -1,0 +1,68 @@
+package bomberman.entities;
+
+import bomberman.maingame.Game;
+import bomberman.maingame.Launcher;
+
+/**
+ * Character class with usage aimed at
+ * player and bot class
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+public abstract class Character extends Entity {
+	
+
+	/**
+	 * Character constructor
+	 * @param game Game object, used primarily to access the keyboard inside the player class
+	 * @param x the X position at which a character is spawned
+	 * @param y the Y position at which a character is spawned
+	 * @param size the size of the character, used to determine where a character stops at the borders
+	 */
+	public Character(Game game, int x, int y, int size) {
+		super(game,x,y,size);
+	}
+	
+	/**
+	 * increases the characters X position
+	 */
+	public void up() {
+		if(getY()>60) {
+			changeY(-1);
+		}
+	}
+	
+	/**
+	 * decreases the characters X position
+	 */
+	public void down() {
+		if(getY()<Launcher.gameHeight - getSize()-60) {
+			changeY(1);
+		}
+	}
+	
+	/**
+	 * decreases the characters Y position
+	 */
+	public void left() {
+		if(getX()>60) {
+			changeX(-1);
+		}
+	}
+	
+	/**
+	 * increases the characters Y position
+	 */
+	public void right() {
+		if(getX()<Launcher.gameWidth - getSize()-60) {
+			changeX(1);
+		}
+	}
+	
+	/**
+	 * update method to be implemented in sub classes
+	 */
+	public abstract void update();
+	
+}

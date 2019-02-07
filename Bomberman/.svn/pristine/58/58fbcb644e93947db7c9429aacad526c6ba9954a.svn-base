@@ -1,0 +1,410 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.Iterator;
+
+import bomberman.maingame.Map;
+import bomberman.maingame.Settings;
+
+public class Bot extends Character {
+	public int direction = 4;
+	private int timer = 60;
+	private int random;
+	private int timerBomb = 60;
+	private int timerStuck = 1;
+	private int modus = 1;
+	int lastX;
+	int lastY;
+	int maxX = -10;
+	int maxY = -10;
+	int minX = -10;
+	int minY = -10;
+
+	private Character enemy = null;
+
+	public Bot() {
+		this.init();
+	}
+
+	// BOT CODE HERE
+	@Override
+	public void update() {
+		getLastPos();
+		// followEnemy();
+
+		collisionMove(this.getRectangle());
+
+		this.getRectangle().setLocation(getNextX(), getNextY());
+		//if we have Bombs to update
+		if(!getCharacterBombList().isEmpty()) {
+			Iterator<Bomb> bombIterator = getCharacterBombList().iterator();
+			while (bombIterator.hasNext()) {
+				Bomb bomb = bombIterator.next();
+				bomb.update();
+				if(bomb.canRemoveBomb()) {
+					bombIterator.remove();
+				}
+			}
+		}
+		
+		/* OLD CODE
+		if (this.getMyBomb() != null) {
+			this.getMyBomb().update();
+			if (this.getMyBomb().canRemoveBomb()) {
+				// Remove the bomb by setting it to null
+				this.setMyBomb(null);
+				this.setPlacedBomb(false);
+			}
+
+		} else if (timerBomb <= 0 && randomChance(10) && (this.getX() != lastX && this.getY() != lastY)) {
+
+			int bombX = ((this.getX() + 19) / 60) * 60;
+			int bombY = ((this.getY() + 19) / 60) * 60;
+			placeBomb(bombX, bombY);
+		}
+		*/
+		
+
+		if (timerBomb <= 0) {
+			timerBomb = 60;
+		} else {
+			timerBomb--;
+		}
+
+		if (isAlive() && modus == 1) {
+
+			this.getRectangle().setLocation(getNextX(), getNextY());
+
+			if (timer == 0) {
+				direction = randomNumber();
+
+				timer = 60;
+
+			} else {
+				timer--;
+			}
+
+			moveDir();
+
+			switch (collisionMove(this.getRectangle())) {
+			case 1:
+				// int newDir = randomNumber();
+				// while (direction == newDir) {
+				// newDir = randomNumber();
+				// }
+				// direction = newDir;
+
+				break;
+				
+			case 2:
+				if (getCharacterBombList().isEmpty()) {
+					int bombX = ((this.getX() + 19) / 60) * 60;
+					int bombY = ((this.getY() + 19) / 60) * 60;
+					placeBomb(bombX, bombY);
+
+					switchDir();
+					break;
+				}
+//OLD CODE START				
+//			case 2:
+//				if (this.getMyBomb() == null) {
+//					int bombX = ((this.getX() + 19) / 60) * 60;
+//					int bombY = ((this.getY() + 19) / 60) * 60;
+//					placeBomb(bombX, bombY);
+//
+//					switchDir();
+//					break;
+//				}
+//OLD CODE END
+			case 3:
+				switchDir();
+				break;
+
+			}
+		}
+		if (!getCharacterBombList().isEmpty()) { // vorher: this.hasPlacedBomb() == true
+			modus = 2;
+		} else {
+			modus = 1;
+		}
+
+		if (isAlive() && modus == 2) {
+
+			moveSafe();
+
+		}
+		if (isAlive()) {
+			if (timerStuck <= 0) {
+				stuck();
+				timerStuck = 1;
+			} else {
+
+				timerStuck--;
+			}
+		}
+	}
+
+	private int randomNumber() {
+		
+//?POSSIBLE ERROR HERE? Random is declared globally but still returned???
+//glaub nicht das dass so gedacht war | fix -> int random und random global wegnehmen
+		random = ((int) (Math.random() * 10)) % 4 + 1;
+
+		return random;
+	}
+
+	public void render(Graphics graphics) {
+		// Render the bomb if it exists
+		if(!getCharacterBombList().isEmpty()) {
+			for(Bomb bomb : getCharacterBombList()) {
+				bomb.render(graphics);
+			}
+		}
+		// small char
+		// graphics.drawImage(this.getImage(), getX(), getY(), 45, 40, null);
+
+		// normal sized char
+		graphics.drawImage(this.getImage(), getX(), getY(), null);
+		this.drawSlideRects(graphics);
+	}
+
+	public void init() {
+		this.resetNextXY();
+		minX = this.getX() - 5;
+		minY = this.getY() - 5;
+		maxX = this.getX() + 5;
+		maxY = this.getY() + 5;
+		lastX = this.getX();
+		lastY = this.getY();
+	}
+
+	private void switchDir() {
+
+		switch (direction)
+
+		{
+		case 1:
+			direction = 2;
+			break;
+		case 2:
+			direction = 1;
+			break;
+		case 3:
+			direction = 4;
+			break;
+		case 4:
+			direction = 3;
+			break;
+		}
+
+	}
+
+	private void moveDir() {
+		switch (direction)
+
+		{
+
+		case 1:
+			up();
+			break;
+		case 2:
+			down();
+			break;
+		case 3:
+			right();
+			break;
+		case 4:
+			left();
+			break;
+
+		}
+	}
+
+	private boolean randomChance(double rng) {
+		double r = Math.random();
+		rng = rng / 100.00;
+		if (r <= rng) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public String identifyChar() {
+		return "Bot";
+	}
+
+	private void getEnemy() {
+
+		double placehold;
+		int xEnemy;
+		int yEnemy;
+		int x, y;
+
+		for (Character e : Character.characterList)
+
+		{
+
+			if (e != this) {
+				xEnemy = e.getX();
+				yEnemy = e.getY();
+				x = this.getX();
+				y = this.getY();
+				// placehold = Math.abs((xEnemy + yEnemy) - (x + y));
+				placehold = e.getRectangle().getLocation().distance(this.getRectangle().getLocation());
+				double enemyDis;
+				if (enemy != null) {
+					enemyDis = this.getRectangle().getLocation().distance(enemy.getRectangle().getLocation());
+				} else {
+					enemyDis = 1000000;
+
+				}
+				if (placehold < enemyDis) {
+
+					enemy = e;
+					System.out.println("[" + this.getCharacterNumber() + "]" + "tracks " + enemy.getCharacterNumber());
+				}
+			}
+		}
+
+	}
+
+	private void followEnemy() {
+
+		getEnemy();
+		int xEnemy = enemy.getX();
+		int yEnemy = enemy.getY();
+		trackPos(xEnemy, yEnemy, 120);
+
+	}
+
+	private void trackPos(int mx, int my, int dist) {
+
+		int trackX = mx;
+		int trackY = my;
+		int trackDist = dist;
+
+		int x = this.getX(), y = this.getY();
+		int dX = x - trackX, dY = y - trackY;
+
+		// if (dX < 250 && dY < 250) {
+
+		if (dX > trackDist) {
+			direction = 4;
+			moveDir();
+			collisionMove(this.getRectangle());
+
+		}
+
+		else if (dX < -trackDist) {
+			direction = 3;
+			moveDir();
+			collisionMove(this.getRectangle());
+
+		}
+
+		else if (dY > trackDist) {
+			direction = 1;
+			moveDir();
+			collisionMove(this.getRectangle());
+
+		}
+
+		else if (dY < -trackDist) {
+			direction = 2;
+			moveDir();
+			collisionMove(this.getRectangle());
+
+		}
+
+	}
+	// }
+
+	// return false if not allowed to slide
+	public boolean allowedToSlide() {
+		// System.out.println(this.characterNumber +" checks slide");
+		// we can never slide if we collide with zgs
+		for (Rectangle r : this.getRectSlide()) {
+			if (checkCollision(r, Map.zgList)) {
+				System.out.println(this.getCharacterNumber() + " not allowed to slide");
+				return false;
+			}
+		}
+
+		// if two rects have a collision with the surroundings, abort sliding
+		int slideRectsWithCollision = 0;
+
+		// number of rectangle that has collision (array number of rectSlide[])
+		int slideID = -1;
+
+		for (int i = 0; i < this.getRectSlide().length; i++) {
+			if (checkCollision(this.getRectSlide()[i], Map.nzgList)) {
+				// store id of rectangle with collision
+				slideID = i;
+				slideRectsWithCollision++;
+			}
+			if (slideRectsWithCollision > 1) {
+				// 2 slide rects have collision with nzgs
+				return false;
+			}
+		}
+
+		if (slideID == -1) {
+			return false;
+		} else {
+			if (slideID == 0 && direction == 1) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && direction == 1) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && direction == 3) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && direction == 3) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && direction == 2) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && direction == 2) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 0 && direction == 4) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && direction == 4) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			}
+
+			return true;
+
+		}
+	}
+
+	private void stuck() {
+
+		if ((minX < this.getX() && this.getX() < maxX) && (minY < this.getY() && this.getY() < maxY)) {
+			switchDir();
+		} else {
+
+			minX = this.getX() - 5;
+			minY = this.getY() - 5;
+			maxX = this.getX() + 5;
+			maxY = this.getY() + 5;
+
+		}
+	}
+
+	private void getLastPos() {
+		if (lastX - 1000000 < this.getX() && this.getX() < lastX + 1000000 && lastY - 1000000 < this.getY()
+				&& this.getY() < lastY + 1000000) {
+			// System.out.println(lastX+" "+ lastY);
+		} else {
+			lastX = this.getX();
+			lastY = this.getY();
+		}
+
+	}
+
+	private void moveSafe() {
+		getLastPos();
+		trackPos(lastX, lastY, 0);
+
+	}
+
+}

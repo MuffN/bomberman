@@ -1,0 +1,126 @@
+package bomberman.entities;
+
+import bomberman.prototype.Game;
+
+/**
+ * The entity class is the parent class
+ * of all items and objects inside the game
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+public abstract class Entity {
+
+	/**
+	 * X-Coordinate of an entity
+	 */
+	private int x;
+	
+	/**
+	 * Y-Coordinate of an entity
+	 */
+	private int y;
+	
+	/**
+	 * Size of an entity
+	 */
+	private int size;
+	
+	/**
+	 * The game object using these entities
+	 */
+	private Game game;
+	
+	private final int CHARACTER_SPEED = 4;
+	
+	/**
+	 * Entity constructor
+	 * @param game game object
+	 * @param x X-coordinate of an entity in pixels
+	 * @param y Y-coordinate of an entity in pixels
+	 * @param size Size of an entity in pixels
+	 */
+	public Entity(Game game, int x, int y, int size) {
+		this.game = game;
+		this.x = x;
+		this.y = y;
+		this.size = size;
+	}
+	
+	/**
+	 * Unimplemented; used to spawn entities
+	 */
+	public void spawn() {
+		//TODO spawn object
+	}
+	
+	/**
+	 * Unimplemented; used to despawn / remove entities
+	 */
+	
+	public void despawn() {
+		//TODO remove object
+	}
+	
+	/**
+	 * X getter
+	 * @return X-Coordinate of an entity
+	 */
+	public int getX() {
+		return x;
+	}
+	
+	/**
+	 * Y getter
+	 * @return Y-Coordinate of an entity
+	 */
+	public int getY() {
+		return y;
+	}
+	
+	/**
+	 * Used to manipulate the X-Coordinate of an entity
+	 * @param var <br>
+	 * 		<b>1</b>: increase the X-Coordinate <br>
+	 * 		<b>2</b>: decrease the X-Coordinate
+	 */
+	//Increment if var == 1 and decrement at var == -1
+	public void changeX(int var) {
+		if(var == 1) {
+			this.x +=CHARACTER_SPEED;
+		} else if (var == -1) {
+			this.x -=CHARACTER_SPEED;
+		}
+	}
+	
+	/**
+	 * Used to manipulate the Y-Coordinate of an entity
+	 * @param var <br>
+	 * 		<b>1</b>: increase the Y-Coordinate <br>
+	 * 		<b>2</b>: decrease the Y-Coordinate
+	 */
+	//Increment if var == 1 and decrement at var == -1
+	public void changeY(int var) {
+		if(var == 1) {
+			this.y +=CHARACTER_SPEED;
+		} else if (var == -1) {
+			this.y -=CHARACTER_SPEED;
+		}
+	}
+	
+	/**
+	 * Game object getter
+	 * @return returns the game object
+	 */
+	public Game getGame() {
+		return game;
+	}
+	
+	/**
+	 * Size getter
+	 * @return returns the entities size
+	 */
+	public int getSize() {
+		return size;
+	}
+}

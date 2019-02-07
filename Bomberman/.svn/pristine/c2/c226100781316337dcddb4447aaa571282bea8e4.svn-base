@@ -1,0 +1,82 @@
+package bomberman.prototype;
+
+
+import java.io.IOException;
+import java.net.URL;
+
+import javafx.application.Application;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+
+
+public class Menu extends Application {
+	
+	@FXML
+	Pane mainGUICenter;
+	
+	@FXML
+	ListView<String> lv_StartMenu;
+	
+	private Stage primaryStage;
+	private BorderPane rootLayout;
+	private ListView<String> dynamicLayout;
+	private URL path;
+	private FXMLLoader loader;
+	
+	@Override
+	public void start(Stage primaryStage) {
+		this.primaryStage = primaryStage;
+		this.primaryStage.setTitle("DynaMine");	
+		
+		initRootLayout();
+	}
+	
+	public void initRootLayout(){
+		
+		FXMLLoader loader = new FXMLLoader();
+		//Root View
+		path = getClass().getResource("MainMenu.fxml");
+		
+		try {
+			loader.setLocation(path);
+			rootLayout = (BorderPane) loader.load();
+			initDynamicLayout("StartMenu.fxml");
+		} catch (IOException ioe) {
+			System.out.println("FXML-File not found: " + path);
+			ioe.printStackTrace();
+		}
+	}
+	
+	public void initDynamicLayout(String fxmldoc){
+		//Startmenu View
+		loader = new FXMLLoader();
+		
+		path = getClass().getResource(fxmldoc);
+		try{
+			loader.setLocation(path);
+			dynamicLayout = (ListView<String>) loader.load();
+		} catch (IOException ioe){
+			System.out.println("FXML-File not found: " + path);
+			ioe.printStackTrace();
+		}
+		
+		dynamicLayout.getSelectionModel().selectFirst();
+		rootLayout.setCenter(dynamicLayout);
+		Scene scene = new Scene(rootLayout);
+		scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
+		primaryStage.setScene(scene);
+		primaryStage.setResizable(false);
+		primaryStage.show();
+
+	}
+	
+	public static void main(String[] args) {
+		launch(args);
+	}
+	
+}

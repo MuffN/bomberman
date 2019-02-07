@@ -1,0 +1,167 @@
+package bomberman.prototype;
+
+import bomberman.entities.Player;
+import bomberman.input.KeyboardControl;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import com.sun.glass.events.KeyEvent;
+
+
+public class Game implements Runnable {
+	
+	//Keyboard mapping for players
+	private final int[] mapping1 = {KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D, KeyEvent.VK_ESCAPE, KeyEvent.VK_SPACE};
+	private final int[] mapping2 = {KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_ESCAPE, KeyEvent.VK_NUMPAD0};
+
+	//Create players (Testcode)
+	Player myPlayer = new Player(this,0,0,mapping1,60,1);
+	Player myPlayer2 = new Player(this,100,100,mapping2,60,2);
+	
+	KeyboardControl keyboard = new KeyboardControl(); // polling
+	
+	private Display gameDisplay;
+	private int width, height;
+	private String title;
+	
+	//True if init() ran
+	boolean running = false;
+	
+	private BufferStrategy bufferStrat; //Amount of pictures to be buffered
+	private Graphics graphics; //Object to draw with
+	
+	
+	
+	
+	//-TESTCODE IMAGES
+	
+	private BufferedImage img, img2;
+	
+	//-TESTCODE IMAGES
+	
+	
+	
+	Thread myThread;
+	
+	public Game(String title, int width, int height){
+		this.width = width;
+		this.height = height;
+		this.title = title;
+	}
+	
+	//Game Loop consists of update() and render(), called in run() thread
+	//http://gameprogrammingpatterns.com/game-loop.html
+	
+	//Called once at the start
+	private void init() {
+		gameDisplay = new Display(title, width, height);
+		gameDisplay.getJFrame().addKeyListener(keyboard);
+		
+		//-TESTCODE IMAGES
+		try {
+			img = ImageIO.read(Game.class.getResource("/images/nzg.png"));
+			img2 = ImageIO.read(Game.class.getResource("/images/zg.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//-TESTCODE IMAGES
+	}
+	
+	//Updates data
+	private void update() {
+		keyboard.poll();
+		myPlayer.update();
+		myPlayer2.update();
+		
+		//DEBUG for coordinates
+		myPlayer.printDebug();
+		myPlayer2.printDebug();
+
+	}
+	
+	//Draw to the screen
+	private void render() {
+		bufferStrat = gameDisplay.getCanvas().getBufferStrategy(); //give Display a BufferStrategy
+		
+		//set BufferStrat if  none has been set yet
+		if(bufferStrat == null) {
+			gameDisplay.getCanvas().createBufferStrategy(2); //Amount of Buffers (incl. Front-Buffer); Use 2 or 3
+			return;
+		}
+		
+		graphics = bufferStrat.getDrawGraphics();
+		graphics.clearRect(0, 0, gameDisplay.getWidth(), gameDisplay.getHeight()); //Refresh screen
+		
+		//Testcode for player (WE SHOULD USE SPAWN() LATER)
+		graphics.drawImage(img, myPlayer.getX(), myPlayer.getY(), null);
+		graphics.setColor(Color.red);
+		graphics.drawImage(img2, myPlayer2.getX(), myPlayer2.getY(), null);
+		
+		
+		//Show new changes
+		bufferStrat.show();
+		graphics.dispose();
+	}
+	
+	//Thread for update() and render()
+	@Override
+	public void run() {
+		init();
+		
+		while(running) {
+			update();
+			render();
+	        try {
+				Thread.sleep(5); //first Version for timing
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
+	
+	//Start Thread starten; synchronized to avoid access problems
+	//http://www.straub.as/java/threads/synchronized.html
+	
+	public synchronized void start() {
+		
+		//Only start if the game is not running yet
+		if(!running){
+			running = true;
+			//Create new Thread of Game class
+			myThread = new Thread(this);
+			
+			//New Thread calls run method
+			myThread.start();
+		} else {
+			return;
+		}
+	}
+	
+	public synchronized void stop() {
+		
+		//Only stop if the game is running
+		if(running) {
+			running = false;
+			//stop Thread; throw exception on error
+			try {
+				myThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			return;
+		}
+	}
+	
+	//Used in Player class
+	public KeyboardControl getKeyboardControl() {
+		return keyboard;
+	}
+}

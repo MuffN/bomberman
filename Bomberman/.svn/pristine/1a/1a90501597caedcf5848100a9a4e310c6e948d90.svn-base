@@ -1,0 +1,135 @@
+package bomberman.maingame;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
+import bomberman.tools.Asset;
+
+/**
+ * Map class
+ * stores all map relevant data
+ * such as borders and various kinds of scattered
+ * objects
+ * 
+ * @author Orkun Somali
+ *
+ */
+
+public class Map {
+	
+	private int x, y;
+	
+	private int koordinate [][] =  {
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+						   			{1,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+									{1,0,1,2,1,0,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,2,0,2,0,0,0,0,1},
+									{1,2,1,0,1,2,1,0,1,2,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,0,1,0,1,0,1,0,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,2,1,2,1,0,1,2,1,2,1,2,1},
+									{1,0,0,2,0,2,0,2,0,2,2,2,0,0,1},
+									{1,0,1,2,1,2,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+									};
+	
+	 //change size later
+	
+	
+	
+	public static List<Rectangle> nzgList = new ArrayList<Rectangle>();
+	public static List<Rectangle> zgList = new ArrayList<Rectangle>();
+
+
+	public static List<Rectangle> bombList = new ArrayList<Rectangle>();
+									
+	public Map(){
+		init();
+
+	}
+	
+
+	public void init(){
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					nzgList.add(new Rectangle(x, y, 60, 60));
+					
+					//System.out.print("Array an stelle" + x + "/" + y + "/" + k+" erstellt ");
+					//System.out.println("i: "+i+" j: "+j);
+					
+				}
+				
+				if(koordinate[i][j] == 2){
+					//graphics.drawImage(Asset.zg_min, x, y, null);
+					zgList.add(new Rectangle(x, y, 60, 60));
+					
+					
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+
+		y=0;
+		x=0;
+		
+	}
+	
+		 
+	
+	public void renderGround(Graphics graphics){
+		
+		graphics.drawImage(Asset.ground_debug, x, y, null);
+	}
+	
+	public void renderDebug(Graphics graphics) {
+		graphics.drawImage(Asset.ground_coords, x, y, null);
+	}
+	
+	
+	
+	public void render(Graphics graphics) {
+	
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(Asset.nzg_min, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 2){
+					graphics.drawImage(Asset.zg_min, x, y, null);
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+		y=0;
+		x=0;
+	}
+	
+	public void update() {
+		//Hier werden dann Gegenstaende aus der Map entfernt
+	}
+	/*
+	public static Rectangle[] getRectArr() {
+		return rectArr;
+	}
+	*/
+}

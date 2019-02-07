@@ -1,0 +1,88 @@
+package bomberman.tools;
+
+import java.awt.image.BufferedImage;
+
+public class Asset {
+	public static BufferedImage character1, character2, character3, character4;
+	public static BufferedImage cdeath1, cdeath2, cdeath3, cdeath4;
+//	public static BufferedImage cdynamite1, cdynamite2, cdynamite3, cdynamite4;
+	public static BufferedImage bomb_debug, dynamite, tnt_blue, tnt_red, tnt_green, tnt_yellow;
+	public static BufferedImage explosion, explosion_blue, explosion_red, explosion_green, explosion_yellow;
+	
+	public static BufferedImage nzgfest;
+	public static BufferedImage nzg1, nzg2, nzg3, nzg4, nzg5, nzg6, nzg7, nzg8;
+	public static BufferedImage zg3, path_ground, path_ground_version2, path_ground_version3, ground_coords;
+	
+	//public static BufferedImage ground_debug, ground_coords, path_ground, path_ground_version3, zg_min, nzg_min, zg, zg2, zg3, explosion;
+	
+	
+	private static boolean loaded = false;
+		
+	private Asset() {
+	}
+	
+	public static void loadAssets() {
+		if(!loaded) {
+			
+			//Character Related
+			character1 = GameImage.loadImage("character1.png");
+			character2 = GameImage.loadImage("character2.png");
+			character3 = GameImage.loadImage("character3.png");
+			character4 = GameImage.loadImage("character4.png");
+			
+			cdeath1 = GameImage.loadImage("cdeath1.png");
+			cdeath2 = GameImage.loadImage("cdeath2.png");
+			cdeath3 = GameImage.loadImage("cdeath3.png");
+			cdeath4 = GameImage.loadImage("cdeath4.png");
+			
+//			dynamite = GameImage.loadImage("dynamite.png");
+//			cdynamite1 = GameImage.loadImage("cdynamite1.png");
+//			cdynamite2 = GameImage.loadImage("cdynamite2.png");
+//			cdynamite3 = GameImage.loadImage("cdynamite3.png");
+//			cdynamite4 = GameImage.loadImage("cdynamite4.png");
+			
+			tnt_blue = GameImage.loadImage("tnt_blue.png");
+			tnt_red = GameImage.loadImage("tnt_red.png");
+			tnt_green = GameImage.loadImage("tnt_green.png");
+			tnt_yellow = GameImage.loadImage("tnt_yellow.png");
+			
+			explosion = GameImage.loadImage("explosion.png");
+			explosion_blue = GameImage.loadImage("explosion_blue.png");
+			explosion_red = GameImage.loadImage("explosion_red.png");
+			explosion_green = GameImage.loadImage("explosion_green.png");
+			explosion_yellow = GameImage.loadImage("explosion_yellow.png");
+			
+			
+			//Map related
+			//NZG
+			nzgfest = GameImage.loadImage("nzgfest.png");
+			nzg1 = GameImage.loadImage("nzg1.png");
+			nzg2 = GameImage.loadImage("nzg2.png");
+			nzg3 = GameImage.loadImage("nzg3.png");
+			nzg4 = GameImage.loadImage("nzg4.png");
+			nzg5 = GameImage.loadImage("nzg5.png");
+			nzg6 = GameImage.loadImage("nzg6.png");
+			nzg7 = GameImage.loadImage("nzg7.png");
+			nzg8 = GameImage.loadImage("nzg8.png");
+			
+			//ZG
+			zg3 = GameImage.loadImage("zg3.png");
+			//zg_min = GameImage.loadImage("zg_min.png");
+			//zg = GameImage.loadImage("zg.png");
+			//zg2 = GameImage.loadImage("zg2.png");
+			
+			
+			//Path-Ground
+			//ground_debug = GameImage.loadImage("path_ground.png");
+			path_ground = GameImage.loadImage("path_ground.png");
+			path_ground_version2 = GameImage.loadImage("path_ground_version2.png");
+			path_ground_version3 = GameImage.loadImage("path_ground_version3.png");
+			ground_coords = GameImage.loadImage("ground_coords.png");
+			
+			bomb_debug = GameImage.loadImage("bomb_debug.png");
+		
+			loaded = true;
+		}
+	}
+
+}

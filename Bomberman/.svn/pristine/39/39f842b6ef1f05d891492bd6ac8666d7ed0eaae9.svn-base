@@ -1,0 +1,69 @@
+package bomberman.entities;
+
+import bomberman.prototype.Game;
+
+public class Player extends Character{
+	
+	//Saves Key mapping
+	private final int[] mapping;
+	
+	//Debugging
+	private int lastX, lastY;
+	private boolean lastBombStatus = false;
+	
+	private int playerNumber;
+	
+	public Player (Game game, int x, int y, int[] mapping, int playerSize, int playerNumber) {
+		super(game, x, y, playerSize);
+		this.mapping = mapping;
+		this.playerNumber = playerNumber;
+	}
+	
+	//Move player with keyboard
+	@Override
+	public void update() {
+		
+		updateBomb();
+		
+		if(getGame().getKeyboardControl().keyDown(mapping[0]) ) {
+			up();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[1])) {
+			left();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[2])) {
+			down();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[3])) {
+			right();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[4])) {
+			//Exit game with ESC
+			System.exit(0);
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[5])) {
+			placeBomb();
+		}
+	}
+	
+	//Returns X and Y coordinate Array
+	public int[] getPosition(){
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+	
+	//Debugging (Only works for 1st player)
+	public void printDebug() {
+		if(lastX != getX() || lastY != getY()) {
+			System.out.println("["+playerNumber+"]  (" + this.getX() + "/" + this.getY() + ")");
+			lastX = getX();
+			lastY = getY();
+		}
+		if(getBombStatus() != lastBombStatus) {
+			lastBombStatus = getBombStatus();
+			System.out.println("["+playerNumber+"] BombStatus: " + lastBombStatus);
+		}
+	}
+}

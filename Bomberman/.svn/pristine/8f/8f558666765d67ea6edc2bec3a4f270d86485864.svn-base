@@ -1,0 +1,141 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
+public class SingleplayerBotmenu extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private JButton[] singleplayerBotbuttons;
+	private static String[] buttonNames = { "1 BOT", "2 BOTS", "3 BOTS", "GO BACK", "QUIT GAME" };
+	private ImageIcon blackBackground = new ImageIcon("res/images/Background_Img_Black.png");
+	private ImageIcon arrowBackground = new ImageIcon("res/images/Background_Img_Arrows.png");
+	private Font pcsenior;
+
+	public SingleplayerBotmenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+
+		singleplayerBotbuttons = new JButton[buttonNames.length];
+		try {
+			pcsenior = Font.createFont(Font.TRUETYPE_FONT, new File("res/fonts/pcsenior.ttf")).deriveFont(13f);
+		} catch (FontFormatException | IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		for (int i = 0; i < buttonNames.length; i++) {
+
+			final int curButton = i;
+
+			singleplayerBotbuttons[i] = new JButton(buttonNames[i]);
+			singleplayerBotbuttons[i].setFocusable(true);
+			singleplayerBotbuttons[i].setMargin(new Insets(0, 0, 0, 0));
+			singleplayerBotbuttons[i].setContentAreaFilled(false);
+			singleplayerBotbuttons[i].setIcon(blackBackground);
+			singleplayerBotbuttons[i].setForeground(Color.YELLOW);
+			singleplayerBotbuttons[i].setHorizontalTextPosition(SwingConstants.CENTER);
+			singleplayerBotbuttons[i].addActionListener(this);
+			singleplayerBotbuttons[i].setActionCommand(buttonNames[i]);
+			singleplayerBotbuttons[i].addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP:
+						if (curButton > 0) {
+							singleplayerBotbuttons[curButton - 1].requestFocus();
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if (curButton < 4) {
+							singleplayerBotbuttons[curButton + 1].requestFocus();
+						}
+						break;
+					default:
+						break;
+					}
+
+				}
+			});
+			singleplayerBotbuttons[i].addFocusListener(new FocusListener() {
+
+		         @Override
+		         public void focusLost(FocusEvent arg0) {
+		        	singleplayerBotbuttons[curButton].setForeground(Color.YELLOW);
+		            singleplayerBotbuttons[curButton].setIcon(blackBackground);
+		         }
+
+		         @Override
+		         public void focusGained(FocusEvent arg0) {
+		        	 singleplayerBotbuttons[curButton].setForeground(Color.RED);
+		            singleplayerBotbuttons[curButton].setIcon(arrowBackground);
+		         }
+		      });
+			singleplayerBotbuttons[i].setBorder(null);
+			singleplayerBotbuttons[i].setBackground(Color.BLACK);
+			singleplayerBotbuttons[i].setFocusPainted(false);
+			singleplayerBotbuttons[i].setFont(pcsenior);
+		}
+
+		singleplayerBotbuttons[0].setBounds(350, 390, 200, 40);
+		singleplayerBotbuttons[1].setBounds(350, 430, 200, 40);
+		singleplayerBotbuttons[2].setBounds(350, 470, 200, 40);
+		singleplayerBotbuttons[3].setBounds(350, 510, 200, 40);
+		singleplayerBotbuttons[4].setBounds(350, 550, 200, 40);
+
+		singleplayerBotbuttons[0].setBackground(Color.CYAN);
+
+		for (int j = 0; j < buttonNames.length; j++) {
+			add(singleplayerBotbuttons[j]);
+		}
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 780);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae){
+		if("1 BOT".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 1);
+		}
+		if("2 BOTS".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 2);
+		}
+		if("3 BOTS".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 3);
+		}
+		if("GO BACK".equals(ae.getActionCommand())){
+			
+			DynaMineGui.changeToPlayerMenu();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+	}
+	
+	public void setFocusFirst(){
+		singleplayerBotbuttons[0].requestFocusInWindow();
+	}
+	
+}

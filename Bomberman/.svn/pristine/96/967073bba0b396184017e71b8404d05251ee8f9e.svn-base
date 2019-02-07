@@ -1,0 +1,109 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bomberman.input.KeyboardControl;
+import bomberman.maingame.Game;
+
+/**
+ * Player class used to create players based on the character class
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+public class Player extends Character {
+
+	public Player() {
+		this.setRectangle(new Rectangle(this.getX(), this.getY(), Character.CHARACTER_SIZE, Character.CHARACTER_SIZE));
+		init();	
+	}
+
+	public void init() {
+		this.resetNextXY();
+	}
+
+	/**
+	 * updates the player position and bomb status
+	 */
+	@Override
+	public void update() {
+		if (this.getMyBomb() != null) {
+			// Decrease the bomb Timer, if the Bomb Timer returns false, the bomb should
+			// explode
+			if (!this.getMyBomb().decreaseTimer()) {
+				// Remove the bomb by setting it to null
+				this.setMyBomb(null);
+				this.setPlacedBomb(false);
+			}
+		}
+		if (this.getCharacterNumber() == 1) {
+			switch (KeyboardControl.lastPressedP1) {
+			case Game.P1_UP:
+				up();
+				break;
+			case Game.P1_DOWN:
+				down();
+				break;
+			case Game.P1_LEFT:
+				left();
+				break;
+			case Game.P1_RIGHT:
+				right();
+				break;
+			}
+			if (Game.getKeyboardControl().keyDown(Game.P1_BOMB)) {
+				int bombX = ((this.getX() + 19) / 60) * 60;
+				int bombY = ((this.getY() + 19) / 60) * 60;
+				placeBomb(bombX, bombY);
+			}
+		} else if (this.getCharacterNumber() == 2) {
+			switch (KeyboardControl.lastPressedP2) {
+			case Game.P2_UP:
+				up();
+				break;
+			case Game.P2_DOWN:
+				down();
+				break;
+			case Game.P2_LEFT:
+				left();
+				break;
+			case Game.P2_RIGHT:
+				right();
+				break;
+			}
+			if (Game.getKeyboardControl().keyDown(Game.P2_BOMB)) {
+				int bombX = ((this.getX() + 19) / 60) * 60;
+				int bombY = ((this.getY() + 19) / 60) * 60;
+				placeBomb(bombX, bombY);
+			}
+		}
+		collisionMove(this.getRectangle());
+	}
+
+	/**
+	 * renders the player
+	 * 
+	 * @param graphics
+	 *            graphics object to be drawn with
+	 */
+	public void render(Graphics graphics) {
+		// Render the bomb if it exists
+		if (this.getMyBomb() != null) {
+			this.getMyBomb().render(graphics);
+		}
+		graphics.drawImage(this.getImage(), getX(), getY(), 45, 40, null);
+	}
+
+	/**
+	 * Position Getter
+	 * 
+	 * @return returns array containing X and Y position as integer
+	 */
+	public int[] getPosition() {
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+}

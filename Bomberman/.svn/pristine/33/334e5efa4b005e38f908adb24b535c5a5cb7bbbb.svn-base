@@ -1,0 +1,57 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import bomberman.prototype.Game;
+import bomberman.tools.Asset;
+import bomberman.tools.GameImage;
+
+
+public class Bot extends Character {
+	public Bot(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+	}
+
+	
+	//BOT CODE HERE
+	@Override
+	public void update() {
+//		int move;
+//		move =(int)(Math.random() * 5) + 0;
+//		
+//		switch(move) {
+//		
+//		
+//		case 0: up();break;
+//		case 1: down();break;
+//		case 2: right();break;
+//		case 3: left();break;
+//		default:break;
+//		
+//		}
+		
+		if (getX() <600 && getY() <=60 ) 
+		{
+			right();
+		}
+		if (getX() == 600 && getY()< 500) 
+		{
+			down();
+		}
+		if (getX() <=600 && getY()==500 && getX()>100) 
+		{
+			left();
+		}
+		if(getX() ==100 && getY() <=550) 
+		{
+			up();
+		}
+	}
+
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.bot1, getX(), getY(), null);
+	}
+	public void init() {
+	}
+}

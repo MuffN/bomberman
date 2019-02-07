@@ -1,0 +1,96 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+public class StartMenu extends JPanel implements ActionListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private JButton[] startmenubuttons;
+	private static String[] buttonNames = {"START","INSTRUCTIONS","CREDITS","QUIT GAME"};
+	
+	
+	public StartMenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+		
+		startmenubuttons = new JButton[buttonNames.length];
+		for(int i = 0; i < buttonNames.length; i++){
+
+			final int curButton = i;
+			
+			startmenubuttons[i] = new JButton(buttonNames[i]);
+			startmenubuttons[i].addActionListener(this);
+			startmenubuttons[i].setActionCommand(buttonNames[i]);
+			startmenubuttons[i].addKeyListener(new KeyAdapter(){
+				@Override
+				public void keyPressed(KeyEvent e){
+					switch (e.getKeyCode()){
+					case KeyEvent.VK_UP:
+						if(curButton > 0){
+							startmenubuttons[curButton].setBackground(Color.BLACK);
+							startmenubuttons[curButton - 1].requestFocus();
+							startmenubuttons[curButton - 1].setBackground(Color.CYAN);
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if(curButton < 3){
+							startmenubuttons[curButton].setBackground(Color.BLACK);
+							startmenubuttons[curButton + 1].requestFocus();
+							startmenubuttons[curButton + 1].setBackground(Color.CYAN);
+						}
+						break;
+					default:
+						break;
+					}
+					
+				}
+			});
+			startmenubuttons[i].setBackground(Color.BLACK);
+			startmenubuttons[i].setBorder(null);
+			startmenubuttons[i].setFocusPainted(false);
+			startmenubuttons[i].setFont(new Font("Arial", Font.PLAIN, 24));
+			
+		}
+		
+		startmenubuttons[0].setBounds(350, 390, 200, 40);
+		startmenubuttons[1].setBounds(350, 430, 200, 40);
+		startmenubuttons[2].setBounds(350, 470, 200, 40);
+		startmenubuttons[3].setBounds(350, 510, 200, 40);
+		
+		startmenubuttons[0].setBackground(Color.CYAN);
+		
+		for (int j = 0; j < buttonNames.length; j++){
+			add(startmenubuttons[j]);
+		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae){
+		if("START".equals(ae.getActionCommand())){
+			DynaMineGui.changeToNext();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+		
+		
+	}
+}

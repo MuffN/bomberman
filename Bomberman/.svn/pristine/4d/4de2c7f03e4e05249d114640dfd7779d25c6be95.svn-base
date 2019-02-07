@@ -1,0 +1,58 @@
+package bomberman.entities.items;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bomberman.entities.Entity;
+
+public abstract class Item extends Entity {
+	
+	Rectangle itemRectangle;
+	private boolean itemVisible = false;
+	
+	public Item (int xPos, int yPos) {
+		itemRectangle = new Rectangle(xPos, yPos, 60, 60);
+		setX(xPos);
+		setY(yPos);
+	}
+
+	@Override
+	public void update() {
+		//not needed
+	};
+
+	@Override
+	public void render(Graphics graphics) {
+		graphics.drawImage(this.getImage(), getX(), getY(), null);
+	}
+	
+	public abstract int getItemType();
+	/*
+	 * 1=BlastRadiusUP
+	 * 2=BlastRadiusDOWN
+	 * 3=CharSpeedUP
+	 * 4=CharSpeedDOWN
+	 * 5=BombNumberUP
+	 * 6=BombNumberDown
+	 * 
+	 */
+	
+	public Rectangle getRectangle() {
+		return itemRectangle;
+	}
+	
+	public void setVisible() {
+		itemVisible = true;
+	}
+	
+	public void setInvisible() {
+		itemVisible = false;
+	}
+	
+	public boolean isVisible() {
+		return itemVisible;
+	}
+	
+	
+	
+}

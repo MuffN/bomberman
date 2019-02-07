@@ -1,0 +1,60 @@
+package bomberman.maingame;
+
+import java.awt.Canvas;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import bomberman.tools.Asset;
+
+/**
+ * Display class to be used in Game class
+ * Sets up a JFrame containing a canvas
+ * allows drawing to the screen and generally
+ * setting up a window
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+
+public class Display extends JPanel {
+
+	/**
+	 * canvas used as a drawing board
+	 */
+	private Canvas canvas;
+	
+	/**
+	 * Display constructor, provides drawing space
+	 * @param title The title of the game window
+	 * @param width Width of the game in pixel
+	 * @param height Height of the game in pixel
+	 */
+	public Display(){
+		setSize(getPreferredSize());
+		
+		canvas = new Canvas();
+		canvas.setPreferredSize(getPreferredSize());
+		canvas.setFocusable(true);
+		this.add(canvas);
+	}
+	
+	/**
+	 * creates our display
+	 * by setting up a JFrame and
+	 * packing it with the canvas object
+	 */
+	
+	/**
+	 * Canvas getter
+	 * @return returns the canvas object
+	 */
+	public Canvas getCanvas(){
+		return canvas;
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+}

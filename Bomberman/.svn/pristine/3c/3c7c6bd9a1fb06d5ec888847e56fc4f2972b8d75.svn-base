@@ -1,0 +1,206 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.Iterator;
+
+import bomberman.input.KeyboardControl;
+import bomberman.maingame.Map;
+import bomberman.maingame.Settings;
+
+/**
+ * Player class used to create players based on the character class
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+public class Player extends Character {
+
+	private KeyboardControl myKeyboard;
+	private int deathTimer = 120;
+	
+	public Player(KeyboardControl myKeyboard) {
+		this.myKeyboard = myKeyboard;
+		init();
+	}
+
+	public void init() {
+		this.resetNextXY();
+	}
+
+	/**
+	 * updates the player position and bomb status
+	 */
+	@Override
+	public void update() {
+		if(!isAlive()) {
+			if(deathTimer==0) {
+				return;
+			}
+			deathTimer--;
+		}
+		//if we have Bombs to update
+		if(!getCharacterBombList().isEmpty()) {
+			Iterator<Bomb> bombIterator = getCharacterBombList().iterator();
+			while (bombIterator.hasNext()) {
+				Bomb bomb = bombIterator.next();
+				bomb.update();
+				if(bomb.canRemoveBomb()) {
+					bombIterator.remove();
+				}
+			}
+		}
+
+		if (isAlive()) {
+			if (this.getCharacterNumber() == 1) {
+				switch (KeyboardControl.lastPressedP1) {
+				case Settings.P1_UP:
+					up();
+					break;
+				case Settings.P1_DOWN:
+					down();
+					break;
+				case Settings.P1_LEFT:
+					left();
+					break;
+				case Settings.P1_RIGHT:
+					right();
+					break;
+				}
+				if (myKeyboard.keyDown(Settings.P1_BOMB)) {
+					int bombX = ((this.getX() + 19) / 60) * 60;
+					int bombY = ((this.getY() + 19) / 60) * 60;
+					placeBomb(bombX, bombY);
+				}
+			} else if (this.getCharacterNumber() == 2) {
+				switch (KeyboardControl.lastPressedP2) {
+				case Settings.P2_UP:
+					up();
+					break;
+				case Settings.P2_DOWN:
+					down();
+					break;
+				case Settings.P2_LEFT:
+					left();
+					break;
+				case Settings.P2_RIGHT:
+					right();
+					break;
+				}
+				if (myKeyboard.keyDown(Settings.P2_BOMB)) {
+					placeBomb(this.getX(), this.getY());
+				}
+			}
+			collisionMove(this.getRectangle());
+		}
+	}
+
+	/**
+	 * renders the player
+	 * 
+	 * @param graphics
+	 *            graphics object to be drawn with
+	 */
+	public void render(Graphics graphics) {
+		// Render the bomb if it exists
+		if(!getCharacterBombList().isEmpty()) {
+			for(Bomb bomb : getCharacterBombList()) {
+				bomb.render(graphics);
+			}
+		}
+		// small char
+		// graphics.drawImage(this.getImage(), getX(), getY(), 45, 40, null);
+
+		// normal sized char
+		graphics.drawImage(this.getImage(), getX(), getY(), null);
+		//this.drawSlideRects(graphics);
+	}
+
+	/**
+	 * Position Getter
+	 * 
+	 * @return returns array containing X and Y position as integer
+	 */
+	public int[] getPosition() {
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+
+	// return false if not allowed to slide
+	public boolean allowedToSlide() {
+		// we can never slide if we collide with zgs
+		for (Rectangle r : this.getRectSlide()) {
+			if (checkCollision(r, Map.zgList)) {
+				//System.out.println(this.getCharacterNumber() + " not allowed to slide");
+				return false;
+			}
+		}
+
+		// if two rects have a collision with the surroundings, abort sliding
+		int slideRectsWithCollision = 0;
+
+		// number of rectangle that has collision (array number of rectSlide[])
+		int slideID = -1;
+
+		for (int i = 0; i < this.getRectSlide().length; i++) {
+			if (checkCollision(this.getRectSlide()[i], Map.nzgList)) {
+				// store id of rectangle with collision
+				slideID = i;
+				slideRectsWithCollision++;
+			}
+			if (slideRectsWithCollision > 1) {
+				// 2 slide rects have collision with nzgs
+				return false;
+			}
+		}
+
+		if (slideID == -1) {
+			return false;
+		}
+
+		if (this.getCharacterNumber() == 1) {
+			if (slideID == 0 && KeyboardControl.lastPressedP1 == Settings.P1_UP) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && KeyboardControl.lastPressedP1 == Settings.P1_UP) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && KeyboardControl.lastPressedP1 == Settings.P1_RIGHT) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && KeyboardControl.lastPressedP1 == Settings.P1_RIGHT) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && KeyboardControl.lastPressedP1 == Settings.P1_DOWN) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && KeyboardControl.lastPressedP1 == Settings.P1_DOWN) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 0 && KeyboardControl.lastPressedP1 == Settings.P1_LEFT) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && KeyboardControl.lastPressedP1 == Settings.P1_LEFT) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			}
+
+		} else if (this.getCharacterNumber() == 2) {
+			if (slideID == 0 && KeyboardControl.lastPressedP2 == Settings.P2_UP) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && KeyboardControl.lastPressedP2 == Settings.P2_UP) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 1 && KeyboardControl.lastPressedP2 == Settings.P2_RIGHT) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && KeyboardControl.lastPressedP2 == Settings.P2_RIGHT) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && KeyboardControl.lastPressedP2 == Settings.P2_DOWN) {
+				moveX(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 2 && KeyboardControl.lastPressedP2 == Settings.P2_DOWN) {
+				moveX(-Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 0 && KeyboardControl.lastPressedP2 == Settings.P2_LEFT) {
+				moveY(Settings.CHARACTER_SLIDE_SPEED);
+			} else if (slideID == 3 && KeyboardControl.lastPressedP2 == Settings.P2_LEFT) {
+				moveY(-Settings.CHARACTER_SLIDE_SPEED);
+			}
+
+		}
+
+		return true;
+
+	}
+}

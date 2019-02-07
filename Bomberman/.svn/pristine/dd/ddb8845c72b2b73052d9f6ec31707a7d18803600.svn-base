@@ -1,0 +1,66 @@
+package bomberman.entities;
+
+import bomberman.prototype.Game;
+import bomberman.prototype.Launcher;
+
+public abstract class Character extends Entity {
+	
+	private boolean placedBomb = false;
+	private int bombTimer;
+	
+	public Character(Game game, int x, int y, int size) {
+		super(game,x,y,size);
+	}
+	
+	public void placeBomb() {
+		//TODO spawn bomb use entity spawn method
+		if(!placedBomb) {
+			System.out.println("BOMB PLACED");
+			placedBomb=true;
+			bombTimer=1000;
+		}
+		//spawn(); //unimplemented
+	}
+	public void updateBomb() {
+		
+		if(bombTimer<=0) {
+			bombTimer=0;
+			placedBomb=false;
+		} else {
+			bombTimer--;
+		}
+	}
+	
+	public boolean getBombStatus() {
+		return placedBomb;
+	}
+	
+	//Movement BEGIN
+	public void up() {
+		if(getY()>0) {
+			changeY(-1);
+		}
+	}
+	
+	public void down() {
+		if(getY()<Launcher.gameHeight - getSize()) {
+			changeY(1);
+		}
+	}
+	
+	public void left() {
+		if(getX()>0) {
+			changeX(-1);
+		}
+	}
+	
+	public void right() {
+		if(getX()<Launcher.gameWidth - getSize()) {
+			changeX(1);
+		}
+	}
+	//MOVEMENT END
+	
+	public abstract void update();
+	
+}

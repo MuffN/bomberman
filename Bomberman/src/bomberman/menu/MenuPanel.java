@@ -1,0 +1,142 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import bomberman.tools.Asset;
+
+/**
+ * The menupanel class is the parent class 
+ * of all menus with interactions
+ * 
+ * @author Patrick Schneider
+ */
+public class MenuPanel extends JPanel{
+	
+	private static final long serialVersionUID = 1L;
+	
+	
+	protected ImageIcon blackBackground = new ImageIcon(Asset.button_background_blank);
+	protected ImageIcon arrowBackground = new ImageIcon(Asset.button_background_arrow);
+	
+	private static String[] buttonNames;
+	private JButton[] menubuttons;
+	private int maxamount;
+	
+
+	public MenuPanel(){
+		setSize(getPreferredSize());
+		setLayout(null);
+	}
+	
+	public MenuPanel(String[] buttonArray) {
+		
+		buttonNames = buttonArray;
+		maxamount = buttonNames.length -1;
+		setSize(getPreferredSize());
+		setLayout(null);
+		
+		menubuttons = new JButton[buttonNames.length];
+		generateButtons();
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.menu_background_logo, 0, 0, null);
+	}
+	
+	public JButton[] getMenubuttons() {
+		return menubuttons;
+	}
+	
+	private void generateButtons() {
+		for (int i = 0; i < buttonNames.length; i++) {
+
+			final int curButton = i;
+
+			menubuttons[i] = new JButton(buttonNames[i]);
+			menubuttons[i].setFocusable(true);
+			menubuttons[i].setMargin(new Insets(0, 0, 0, 0));
+			menubuttons[i].setContentAreaFilled(false);
+			menubuttons[i].setIcon(blackBackground);
+			menubuttons[i].setOpaque(false);
+			menubuttons[i].setForeground(Color.YELLOW);
+			menubuttons[i].setHorizontalTextPosition(SwingConstants.CENTER);
+			menubuttons[i].addActionListener((ActionListener) this);
+			menubuttons[i].setActionCommand(buttonNames[i]);
+			menubuttons[i].addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP:
+						if (curButton > 0) {
+							menubuttons[curButton - 1].requestFocus();
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if (curButton < maxamount) {
+							menubuttons[curButton + 1].requestFocus();
+						}
+						break;
+					default:
+						break;
+					}
+
+				}
+			});
+			menubuttons[i].addFocusListener(new FocusListener() {
+
+				@Override
+				public void focusLost(FocusEvent arg0) {
+					menubuttons[curButton].setForeground(Color.YELLOW);
+					menubuttons[curButton].setIcon(blackBackground);
+				}
+
+				@Override
+				public void focusGained(FocusEvent arg0) {
+					menubuttons[curButton].setForeground(Color.RED);
+					menubuttons[curButton].setIcon(arrowBackground);
+				}
+			});
+			menubuttons[i].setBorder(null);
+			menubuttons[i].setFocusPainted(false);
+			menubuttons[i].setFont(Asset.pcsenior.deriveFont(20f));
+			setTheBounds(i);
+
+		}
+		
+		menubuttons[0].requestFocusInWindow();
+		
+		addTheButtons();
+		
+	}
+	
+	protected void setTheBounds(int i){
+		menubuttons[i].setBounds(250, 410+(i*40) , 400, 40);
+	}
+	
+	protected void addTheButtons() {
+		for (int j = 0; j < buttonNames.length; j++) {
+			add(menubuttons[j]);
+		}
+	}
+
+}

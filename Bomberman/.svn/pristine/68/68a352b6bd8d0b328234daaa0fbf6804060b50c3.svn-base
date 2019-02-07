@@ -1,0 +1,149 @@
+package bomberman.maingame;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
+import bomberman.tools.Asset;
+
+/**
+ * Map class
+ * stores all map relevant data
+ * such as borders and various kinds of scattered
+ * objects
+ * 
+ * @author Orkun Somali
+ *
+ */
+
+public class Map {
+	
+	private int x, y;
+	
+	public static int koordinate [][] =  {
+									{6,1,1,1,1,1,1,1,1,1,1,1,1,1,7},
+						   			{4,0,0,10,10,10,0,0,0,10,0,0,0,0,2},
+									{4,0,9,10,9,0,9,0,9,10,9,0,9,0,2},
+									{4,0,0,10,10,10,0,10,0,10,0,0,0,0,2},
+									{4,10,9,0,9,10,9,0,9,10,9,0,9,10,2},
+									{4,10,0,10,10,10,0,0,0,10,10,10,0,10,2},
+									{4,10,9,0,9,0,9,0,9,0,9,0,9,10,2},
+									{4,10,0,10,10,10,0,0,0,10,10,10,0,10,2},
+									{4,10,9,10,9,10,9,0,9,10,9,10,9,10,2},
+									{4,0,0,10,0,10,0,10,0,10,10,10,0,0,2},
+									{4,0,9,10,9,10,9,0,9,10,9,0,9,0,2},
+									{4,0,0,10,10,10,0,0,0,10,0,0,0,0,2},
+									{5,3,3,3,3,3,3,3,3,3,3,3,3,3,8}
+									};
+	
+	public static List<Rectangle> nzgList = new ArrayList<Rectangle>();
+	public static List<Rectangle> zgList = new ArrayList<Rectangle>();
+	//public static List<Rectangle> bombRectList = new ArrayList<Rectangle>();
+	public static List<Rectangle> blastList = new ArrayList<Rectangle>();
+	
+									
+	public Map(){
+		init();
+
+	}
+	
+
+	private void init(){
+		for (int i=0; i<13; i++){
+			x=0;
+			for (int j=0; j<15; j++){
+				if(koordinate[i][j] == 1 || koordinate[i][j] == 2
+						|| koordinate[i][j] == 3 || koordinate[i][j] == 4
+						|| koordinate[i][j] == 5 || koordinate[i][j] == 6
+						|| koordinate[i][j] == 7 || koordinate[i][j] == 8
+						|| koordinate[i][j] == 9){
+					nzgList.add(new Rectangle(x, y, 60, 60));
+				}
+				
+				if(koordinate[i][j] == 10){
+					zgList.add(new Rectangle(x, y, 60, 60));
+				}
+				x+=60;
+			}
+			y+=60;
+		}
+		y=0;
+		x=0;
+	}
+	
+	private void renderGround(Graphics graphics){
+		
+		graphics.drawImage(Asset.path_ground, x, y, null);
+	}
+	
+//	public void renderDebug(Graphics graphics) {
+//		graphics.drawImage(Asset.ground_coords, x, y, null);
+//	}
+	
+	private void renderZGNZG(Graphics graphics) {
+	
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(Asset.nzg1, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 2){
+					graphics.drawImage(Asset.nzg2, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 3){
+					graphics.drawImage(Asset.nzg3, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 4){
+					graphics.drawImage(Asset.nzg4, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 5){
+					graphics.drawImage(Asset.nzg5, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 6){
+					graphics.drawImage(Asset.nzg6, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 7){
+					graphics.drawImage(Asset.nzg7, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 8){
+					graphics.drawImage(Asset.nzg8, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 9){
+					graphics.drawImage(Asset.nzgfest, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 10){
+					graphics.drawImage(Asset.zg3, x, y, null);
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+		y=0;
+		x=0;
+	}
+	
+	public void render(Graphics graphics) {
+		this.renderGround(graphics);
+		this.renderZGNZG(graphics);
+	}
+	
+	public void update() {
+		//Remove ZG from list here later
+	}
+}

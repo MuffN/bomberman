@@ -1,0 +1,450 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import bomberman.entities.items.Item;
+import bomberman.entities.items.ItemManager;
+import bomberman.maingame.Map;
+import bomberman.maingame.Settings;
+import bomberman.tools.Asset;
+
+/**
+ * Character class with usage aimed at player and bot class
+ *
+ * @author Lukas Pruetzel
+ *
+ */
+public abstract class Character extends Entity {
+
+	// List of all characters
+	public static List<Character> characterList = new ArrayList<Character>();
+
+	// List of all dead characters
+	public static List<Character> characterToDelete = new ArrayList<Character>();
+
+	// ID of the next character (incremented after a new character is created)
+	public static int characterCounter = 1;
+
+	// ID of the character (player/bot) object
+	private int characterNumber;
+
+	// Death picture for character
+	private BufferedImage deathImg = null;
+
+	// 4 Additional rectangles to calculate sliding
+	private Rectangle[] rectSlide = new Rectangle[4];
+
+	// contains all Bombs this character can walk through
+	private List<Rectangle> passBombList = new ArrayList<Rectangle>();
+	// private Bomb characterBomb = null;
+
+	// contains all placed Bombs for this character
+	private List<Bomb> characterBombList = new ArrayList<Bomb>();
+	
+	// Current number of bombs a character is allowed to place (at maximum)
+	private int allowedBombs = Settings.DEFAULT_BOMB_NUMBER;
+	
+	// Minimum number of bombs a character is allowed to place
+	private int minBombs = Settings.MIN_BOMB_NUMBER;
+	
+	// Current blast radius of bombs for this character
+	private int blastRadius = Settings.DEFAULT_BOMB_RADIUS;
+	
+	// Minimum blast radius for bombs for this character
+	private int minBlastRadius = Settings.MIN_BOMB_RADIUS;
+	
+	// Current character speed
+	private int characterSpeed = Settings.CHARACTER_SPEED;
+	
+	// Minimum character speed (can't be reduced anymore by items)
+	private int minCharacterSpeed = Settings.MIN_CHARACTER_SPEED;
+	
+	// Maximum character speed (can't be higher with items)
+	private int maxCharacterSpeed = Settings.MAX_CHARACTER_SPEED;
+	
+	// Whether the character is alive or not
+	private boolean isAlive = true;
+
+	/**
+	 * Character constructor
+	 * 
+	 * @param game
+	 *            Game object, used primarily to access the keyboard inside the
+	 *            player class
+	 * @param x
+	 *            the X position at which a character is spawned
+	 * @param y
+	 *            the Y position at which a character is spawned
+	 * @param size
+	 *            the size of the character, used to determine where a character
+	 *            stops at the borders
+	 */
+	public Character() {
+		init();
+	}
+
+	private void init() {
+		// Assign character picture and position
+		switch (Character.characterCounter) {
+		case 1:
+			setImage(Asset.character1);
+			deathImg = Asset.cdeath1;
+			setX(60);
+			setY(60);
+			break;
+		case 2:
+			setImage(Asset.character2);
+			deathImg = Asset.cdeath2;
+			setX(780);
+			setY(60);
+			break;
+		case 3:
+			setImage(Asset.character3);
+			deathImg = Asset.cdeath3;
+			setX(780);
+			setY(660);
+			break;
+		case 4:
+			setImage(Asset.character4);
+			deathImg = Asset.cdeath4;
+			setX(60);
+			setY(660);
+			break;
+		default:
+			System.out.println("ERROR INCORRECT PLAYER NUMBER!");
+			System.exit(0);
+			break;
+		}
+		// Create collision rectangle
+		this.setRectangle(new Rectangle(this.getX(), this.getY(), Settings.CHARACTER_SIZE, Settings.CHARACTER_SIZE));
+
+		// Add slide rectangles
+		initCollSlide();
+		
+		// Assign character number
+		characterNumber = Character.characterCounter;
+		Character.incrementCharCount();
+		// add character to the characterList (for bomb collision)
+		Character.characterList.add(this);
+	}
+
+	public abstract String identifyChar();
+
+	// DEBUG FOR RECTANGLE OUTLINE
+	public void drawSlideRects(Graphics graphics) {
+		for (Rectangle r : rectSlide) {
+			graphics.drawRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(), (int) r.getHeight());
+		}
+	}
+
+	// Create slide collision rectangles
+	// ***********
+	// *0       1*
+	// *         * array pos of rectangles
+	// *3       2*
+	// ***********
+	private void initCollSlide() {
+		for (int i = 0; i < rectSlide.length; i++) {
+			int rectSize = Settings.CHARACTER_SIZE - Settings.COLL_SLIDE;
+			// System.out.println(rectSize + " XX " + i);
+			switch (i) {
+			case 0:
+				rectSlide[i] = new Rectangle(this.getX(), this.getY(), rectSize, rectSize);
+				break;
+			case 1:
+				rectSlide[i] = new Rectangle(this.getX() + Settings.COLL_SLIDE, this.getY(), rectSize, rectSize);
+				break;
+			case 2:
+				rectSlide[i] = new Rectangle(this.getX() + Settings.COLL_SLIDE, this.getY() + Settings.COLL_SLIDE,
+						rectSize, rectSize);
+				break;
+			case 3:
+				rectSlide[i] = new Rectangle(this.getX(), this.getY() + Settings.COLL_SLIDE, rectSize, rectSize);
+				break;
+			}
+		}
+	}
+
+	// Move the RectSlide Rectangles into the direction the main rectangle moved to
+	private void moveRectSlide() {
+		for (int i = 0; i < rectSlide.length; i++) {
+			switch (i) {
+			case 0:
+				rectSlide[i].setLocation(this.getNextX(), this.getNextY());
+				break;
+			case 1:
+				rectSlide[i].setLocation(this.getNextX() + Settings.COLL_SLIDE, this.getNextY());
+				break;
+			case 2:
+				rectSlide[i].setLocation(this.getNextX() + Settings.COLL_SLIDE, this.getNextY() + Settings.COLL_SLIDE);
+				break;
+			case 3:
+				rectSlide[i].setLocation(this.getNextX(), this.getNextY() + Settings.COLL_SLIDE);
+				break;
+			}
+		}
+	}
+	
+	// movement is called by these 4 methods, moves collision rectangle
+
+	public void up() {
+		this.setNextY(-characterSpeed);
+	}
+
+	public void down() {
+		this.setNextY(characterSpeed);
+	}
+
+	public void left() {
+		this.setNextX(-characterSpeed);
+	}
+
+	public void right() {
+		this.setNextX(characterSpeed);
+	}
+
+	// test one rectangle for intersection with a list of rectangles
+	public boolean checkCollision(Rectangle myRect, List<Rectangle> rectList) {
+		for (Rectangle rect : rectList) {
+			if (myRect.intersects(rect)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	// test one rectangle for intersection with a list of entities
+	public boolean checkEntityCollision(Rectangle rect, List<? extends Entity> entityList) {
+		for (Entity e : entityList) {
+			if (rect.intersects(e.getRectangle())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// method used to place bombs, X & Y have to be top right corner
+	public void placeBomb(int x, int y) {
+		
+		int bombX = ((x + 19) / 60) * 60;
+		int bombY = ((y + 19) / 60) * 60;
+		
+		// Dead characters can't place bombs
+		if (!isAlive) {
+			return;
+		}
+		
+		// We placed less bombs than we are allowed to
+		if (characterBombList.size() < allowedBombs) {
+			Rectangle tempBomb = new Rectangle(bombX, bombY, 60, 60);
+
+			// Check if another bomb occupies the tile
+			for (Bomb bomb : Bomb.bombList) {
+				if (tempBomb.intersects(bomb.getRectangle())) {
+					// can't place bomb
+					tempBomb = null;
+					return;
+				}
+			}
+			Bomb newBomb = new Bomb(bombX, bombY, characterNumber, blastRadius);
+			characterBombList.add(newBomb);
+
+			System.out.println("[" + this.characterNumber + "] - BOMB " + characterBombList.size() + " PLACED");
+
+			for (Character c : Character.characterList) {
+				c.getPassBombList().add(newBomb.getRectangle());
+			}
+		}
+	}
+
+	public abstract boolean allowedToSlide();
+
+	// Check all possible collisions with all entities
+	public int collisionMove(Rectangle myRect) {
+		// Rectangle "scouts" forward
+		myRect.setLocation(getNextX(), getNextY());
+
+		// check if character is allowed to slide
+		moveRectSlide();
+		// check if character is no longer allowed to bypass certain bombs
+		checkBombCollision();
+		// check if character has collected an item
+
+		// checks for collision with explosions
+		if (checkBlast()) {
+			return -1; // die
+		}
+
+		// no collision with zg, nzg and bombs
+		if (!this.checkCollision(myRect, Map.zgList) && !this.checkCollision(myRect, Map.nzgList)
+				&& !this.checkEntityCollision(myRect, Bomb.bombList) && !this.checkEntityCollision(myRect, ItemManager.AllItems)) {
+			this.move();
+			return 0; // no coll
+
+			// no collision with zg, nzg (--> collision with bomb)
+		} else if (!this.checkCollision(myRect, Map.zgList) && !this.checkCollision(myRect, Map.nzgList)
+				&& !this.checkEntityCollision(myRect, ItemManager.AllItems)) {
+			boolean pass = false;
+			for (Bomb bomb : Bomb.bombList) {
+				if (this.getRectangle().intersects(bomb.getRectangle())
+						&& this.passBombList.contains(bomb.getRectangle())) {
+					pass = true;
+				} else if (this.getRectangle().intersects(bomb.getRectangle())
+						&& !this.passBombList.contains(bomb.getRectangle())) {
+					resetNextXY();
+					return 3; // bombcoll
+				}
+			}
+			if (pass) {
+				this.move();
+				return 0;
+			}
+		} else if (this.checkEntityCollision(myRect, ItemManager.AllItems)) {
+			checkItems();
+		}
+
+		// collision with nzg (return for bots)
+		if (this.checkCollision(myRect, Map.nzgList)) {
+
+			// SLIDE HERE if no zg coll
+			if (identifyChar() == "Player" || identifyChar() == "Bot") {
+				allowedToSlide();
+			}
+
+			myRect.setLocation(getX(), getY());
+			resetNextXY();
+			return 1; // nzgColl
+
+			// collision with zg (return for bots)
+		} else if (this.checkCollision(myRect, Map.zgList)) {
+			myRect.setLocation(getX(), getY());
+			resetNextXY();
+			return 2; // zgColl
+		}
+
+		myRect.setLocation(getX(), getY());
+		resetNextXY();
+		// this should never be returned (unreachable)
+		return 666;
+
+	}
+
+	// Check if the player is standing inside an explosion / blast and kill him off
+	private boolean checkBlast() {
+
+		if(!Settings.INVINCIBLE_BOTS || !(this.getClass().getSimpleName().equals("Bot"))) {
+			for (Rectangle e : Map.blastList) {
+				// Places dead characters on the left side of the screen
+				if (e.intersects(this.getRectangle())) {
+					this.isAlive = false;
+					System.out.println("[" + this.characterNumber + "] - DIED IN AN EXPLOSION");
+					Character.characterToDelete.add(this);
+					this.setX(0);
+					this.setY(Settings.characterDeathPos);
+					Settings.characterDeathPos += 60;
+					this.resetNextXY();
+					this.setImage(this.deathImg);
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	// Checks if the Character is still allowed to pass certain Bombs
+	private void checkBombCollision() {
+		for (Character c : Character.characterList) {
+			Iterator<Rectangle> bombListItem = c.getPassBombList().iterator();
+			while (bombListItem.hasNext()) {
+				Rectangle bomb = bombListItem.next();
+				if (!bomb.intersects(c.getRectangle()))
+					// Retract permission to walk through bombs he doesn't currently stand on
+					bombListItem.remove();
+			}
+		}
+	}
+
+	private synchronized void checkItems() {
+
+		Iterator<Item> itemListIterator = ItemManager.AllItems.iterator();
+		while (itemListIterator.hasNext()) {
+			Item item = itemListIterator.next();
+			if (item.getRectangle().intersects(this.getRectangle()) && item.isVisible()) {
+				item.consume(this);
+				itemListIterator.remove();
+			}
+		}
+	}
+
+	public static void incrementCharCount() {
+		Character.characterCounter++;
+	}
+
+	// GETTER & SETTER
+	
+	public int getAllowedBombs() {
+		return allowedBombs;
+	}
+
+	public void setAllowedBombs(int allowedBombs) {
+		if((this.allowedBombs+allowedBombs)>=minBombs) {
+			this.allowedBombs = allowedBombs;
+		}
+	}
+
+	public int getBlastRadius() {
+		return blastRadius;
+	}
+
+	public void setBlastRadius(int blastRadius) {
+		if((this.blastRadius+blastRadius)>=minBlastRadius)
+		this.blastRadius = blastRadius;
+	}
+
+	public int getCharacterSpeed() {
+		return characterSpeed;
+	}
+	
+	public void setCharacterSpeed(int characterSpeed) {
+		if((this.characterSpeed+characterSpeed)>=minCharacterSpeed && (this.characterSpeed+characterSpeed)<=maxCharacterSpeed) {
+			this.characterSpeed = characterSpeed;
+		}
+	}
+	
+	public Rectangle[] getRectSlide() {
+		return rectSlide;
+	}
+
+	public List<Rectangle> getPassBombList() {
+		return passBombList;
+	}
+
+	public void setPassBombList(List<Rectangle> passBombList) {
+		this.passBombList = passBombList;
+	}
+
+	public List<Bomb> getCharacterBombList() {
+		return characterBombList;
+	}
+
+	public boolean isBombListFull() {
+		if (characterBombList.size() == this.allowedBombs) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public int getCharacterNumber() {
+		return characterNumber;
+	}
+
+	public boolean isAlive() {
+		return isAlive;
+	}
+}

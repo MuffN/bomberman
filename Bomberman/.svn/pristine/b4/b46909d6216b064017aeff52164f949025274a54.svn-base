@@ -1,0 +1,58 @@
+package bomberman.prototype;
+
+public abstract class Character {
+	
+	//Koordinaten der Figur
+	private int x, y;
+	//Groesse der Figur in Pixeln
+	private int size;
+	private Game game;
+	
+	public Character(Game game, int x, int y, int size) {
+		this.game = game;
+		this.x = x;
+		this.y = y;
+		this.size = size;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return y;
+	}
+	
+	
+	//Bewegungen
+	public void up() {
+		if(y>0) {
+			y--;
+		}
+	}
+	
+	public void down() {
+		if(y<Launcher.gameHeight - size) {
+			y++;
+		}
+	}
+	
+	public void left() {
+		if(x>0) {
+			x--;
+		}
+	}
+	
+	public void right() {
+		if(x<Launcher.gameWidth - size) {
+			x++;
+		}
+	}
+	
+	public Game getGame() {
+		return this.game;
+	}
+
+	public abstract void update();
+	
+}

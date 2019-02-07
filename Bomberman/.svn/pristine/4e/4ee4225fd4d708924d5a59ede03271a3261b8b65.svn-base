@@ -1,0 +1,104 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import bomberman.entities.MenuPanel;
+import bomberman.tools.Asset;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+public class Credits extends MenuPanel implements ActionListener{
+
+	private static final long serialVersionUID = 1L;
+
+	private static String[] buttonNames = { "GO BACK" };
+	private JButton[] creditbutton;
+	private JLabel creditsLabel;
+	private JLabel mate1Label;
+	private JLabel mate2Label;
+	private JLabel mate3Label;
+	private JLabel mate4Label;
+
+	public Credits() {
+		
+		super(buttonNames);
+
+		creditsLabel = new JLabel("CREDITS", SwingConstants.CENTER);
+		creditsLabel.setForeground(Color.WHITE);
+		creditsLabel.setBounds(250, 80, 400, 50);
+		creditsLabel.setFont(Asset.pcsenior.deriveFont(24f));
+		
+		mate1Label = new JLabel("LUKAS PRÜTZEL", SwingConstants.CENTER);
+		mate1Label.setForeground(Color.WHITE);
+		mate1Label.setBounds(250, 200, 400, 50);
+		mate1Label.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		mate2Label = new JLabel("PATRICK SCHNEIDER", SwingConstants.CENTER);
+		mate2Label.setForeground(Color.WHITE);
+		mate2Label.setBounds(250, 280, 400, 40);
+		mate2Label.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		mate3Label = new JLabel("SIRISAK SIRIRATH", SwingConstants.CENTER);
+		mate3Label.setForeground(Color.WHITE);
+		mate3Label.setBounds(250, 360, 400, 40);
+		mate3Label.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		mate4Label = new JLabel("TAYFUN-ORKUN SOMALI", SwingConstants.CENTER);
+		mate4Label.setForeground(Color.WHITE);
+		mate4Label.setBounds(250, 440, 400, 40);
+		mate4Label.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		creditbutton = super.getMenubuttons();
+		
+		//setting the Bounds separately
+		creditbutton[0].setBounds(250, 600, 400, 40);
+		
+		//adding creditbutton separately
+		add(creditbutton[0]);
+
+		add(creditsLabel);
+		add(mate1Label);
+		add(mate2Label);
+		add(mate3Label);
+		add(mate4Label);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+
+		if ("GO BACK".equals(ae.getActionCommand())) {
+			DynaMineGui.changeToStart();
+		}
+	}
+
+	public void setFocusFirst() {
+		creditbutton[0].requestFocusInWindow();
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.blackground, 0, 0, null);
+	}
+
+	@Override
+	protected void setTheBounds(int i) {
+		//do nothing to set the Bounds separately
+	}
+	
+	@Override
+	protected void addTheButtons(){
+		//do nothing to add the buttons after setting the Bounds
+	}
+}
+

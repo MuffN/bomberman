@@ -1,0 +1,18 @@
+package bomberman.prototype;
+
+public class Bot extends Character {
+
+	public Bot(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+	}
+
+	
+	//BOT CODE HIER
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+}

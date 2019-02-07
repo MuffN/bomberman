@@ -1,0 +1,31 @@
+package bomberman.maingame;
+
+public class Launcher {
+	
+	/**
+	 * Width of the game window in pixel
+	 */
+	public static int gameWidth = 900;
+	
+	/**
+	 * Height of the game window in pixel
+	 */
+	public static int gameHeight = 780;
+
+	
+	/**
+	 * Main method
+	 * @param args
+	 */
+	public static void main(String[] args){
+		
+		//create Game object and set Title
+		Game myGame = new Game("Bomberman", Launcher.gameWidth, Launcher.gameHeight);
+		
+		//generates a game thread and starts the game
+		myGame.start();
+	}
+	
+	
+
+}

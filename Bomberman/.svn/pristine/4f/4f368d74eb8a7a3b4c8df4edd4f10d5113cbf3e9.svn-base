@@ -1,0 +1,271 @@
+package bomberman.entities;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import bomberman.maingame.Game;
+import bomberman.maingame.Launcher;
+import bomberman.maingame.Map;
+
+/**
+ * Character class with usage aimed at player and bot class
+ *
+ * @author Lukas Pruetzel
+ *
+ */
+public abstract class Character extends Entity {
+
+	private Bomb myBomb = null;
+	private long bombTime = 0;
+	private boolean placedBomb = false;
+
+	private Rectangle rectangle;
+
+	private List<Rectangle> passBombList = new ArrayList<Rectangle>();
+	public static List<Character> characterList = new ArrayList<Character>();
+	public static List<Character> characterToDelete = new ArrayList<Character>();
+
+	/**
+	 * Character constructor
+	 * 
+	 * @param game
+	 *            Game object, used primarily to access the keyboard inside the
+	 *            player class
+	 * @param x
+	 *            the X position at which a character is spawned
+	 * @param y
+	 *            the Y position at which a character is spawned
+	 * @param size
+	 *            the size of the character, used to determine where a character
+	 *            stops at the borders
+	 */
+	public Character(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+
+	}
+
+	/**
+	 * increases the characters X position
+	 */
+	public void up() {
+		if (getY() > 60) {
+			changeY(-1);
+		}
+	}
+
+	/**
+	 * decreases the characters X position
+	 */
+	public void down() {
+		if (getY() < Launcher.gameHeight - getSize() - 60) {
+			changeY(1);
+		}
+	}
+
+	/**
+	 * decreases the characters Y position
+	 */
+	public void left() {
+		if (getX() > 60) {
+			changeX(-1);
+		}
+	}
+
+	/**
+	 * increases the characters Y position
+	 */
+	public void right() {
+		if (getX() < Launcher.gameWidth - getSize() - 60) {
+			changeX(1);
+		}
+	}
+
+	// We might need these functions again later for the bots (to check if the
+	// collision is NZG or ZG)
+	// Is currently used in bot class but incorrectly
+
+	public boolean checkNZGCollision(Rectangle myRect) {
+		for (Rectangle rect : Map.nzgList) {
+			if (rect == null) {
+				return false;
+			}
+			if (myRect.intersects(rect)) {
+				System.out.println("COLLISION NZG");
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// public boolean checkZGCollision(Rectangle myRect){
+	// for (Rectangle rect : Map.zgList){
+	// if(rect == null){
+	// }
+	// else if(myRect.intersects(rect)){
+	// System.out.println("COLLISION ZG");
+	// return true;
+	// }
+	//
+	// }
+	// return false;
+	// }
+
+	public boolean checkCollision(Rectangle myRect, List<Rectangle> rectList) {
+
+		for (Rectangle rect : rectList) {
+
+			if (myRect.intersects(rect)) {
+				// System.out.println(this.getClass().getSimpleName() + " COLLISION");
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+	
+	public boolean checkBombColl(Rectangle myRect, List<Bomb> bombList) {
+
+		for (Bomb bomb : bombList) {
+
+			if (myRect.intersects(bomb.getBombRect())) {
+				// System.out.println(this.getClass().getSimpleName() + " COLLISION");
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+	public void placeBomb(int bombX, int bombY) {
+		
+		//when character has not placed a bomb yet
+		if (!placedBomb) {
+			Rectangle tempRectangle = new Rectangle(bombX, bombY, 60, 60);
+			for (Bomb bomb : Bomb.bombList) {
+				if (tempRectangle.intersects(bomb.getBombRect())) {
+					System.out.println("Bombe kann nicht platziert werden!");
+					tempRectangle = null;
+					return;
+				}
+			}
+
+			System.out.println("BOMB PLACED");
+			this.setBombTime(System.nanoTime());
+			setPlacedBomb(true);
+			this.setMyBomb(new Bomb(bombX, bombY));
+			for (Character c : Character.characterList) {
+				c.getPassBombList().add(this.getMyBomb().getBombRect());
+			}
+		}
+	}
+
+	public boolean collisionMove(Rectangle myRect) {
+
+		myRect.setLocation(getNextX(), getNextY());
+		checkBombs();
+		if(checkBlast()) {
+			return true;
+		}
+		if (!this.checkCollision(myRect, Map.zgList) && !this.checkCollision(myRect, Map.nzgList)
+				&& !this.checkBombColl(myRect, Bomb.bombList)) {
+			this.move();
+			return true;
+		} else if (!this.checkCollision(myRect, Map.zgList) && !this.checkCollision(myRect, Map.nzgList)) {
+			boolean pass = false;
+			for (Bomb bomb : Bomb.bombList) {
+				if (this.getRectangle().intersects(bomb.getBombRect()) && this.passBombList.contains(bomb.getBombRect())) {
+					pass = true;
+				} else if (this.getRectangle().intersects(bomb.getBombRect()) && !this.passBombList.contains(bomb.getBombRect())) {
+					resetNextXY();
+					return false;
+				}
+			}
+			if (pass) {
+				this.move();
+				return true;
+			}
+
+		} else {
+			myRect.setLocation(getX(), getY());
+			resetNextXY();
+			return false;
+		}
+		resetNextXY();
+		return false;
+
+	}
+	private boolean checkBlast () {
+		for(Rectangle e : Map.blastList) {
+			if (e.intersects(rectangle)) {
+				Character.characterToDelete.add(this);
+				this.setX(0);
+				this.setY(0);
+				this.resetNextXY();
+				return true;
+				
+			}
+			
+		}
+		return false;
+	}
+		
+
+	
+	private void checkBombs() {
+
+		for (Character c : Character.characterList) {
+
+			Iterator<Rectangle> bombListItem = c.getPassBombList().iterator();
+
+			while (bombListItem.hasNext()) {
+				Rectangle bomb = bombListItem.next();
+
+				if (!bomb.intersects(c.getRectangle()))
+					bombListItem.remove();
+			}
+		}
+	}
+
+	public List<Rectangle> getPassBombList() {
+		return passBombList;
+	}
+
+	public void setPassBombList(List<Rectangle> passBombList) {
+		this.passBombList = passBombList;
+	}
+
+	public Rectangle getRectangle() {
+		return rectangle;
+	}
+
+	public void setRectangle(Rectangle rectangle) {
+		this.rectangle = rectangle;
+	}
+
+	public Bomb getMyBomb() {
+		return myBomb;
+	}
+
+	public void setMyBomb(Bomb myBomb) {
+		this.myBomb = myBomb;
+	}
+
+	public long getBombTime() {
+		return bombTime;
+	}
+
+	public void setBombTime(long bombTime) {
+		this.bombTime = bombTime;
+	}
+
+	public boolean hasPlacedBomb() {
+		return placedBomb;
+	}
+
+	public void setPlacedBomb(boolean placedBomb) {
+		this.placedBomb = placedBomb;
+	}
+
+}

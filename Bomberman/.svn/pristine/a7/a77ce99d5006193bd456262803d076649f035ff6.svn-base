@@ -1,0 +1,33 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+public class Startseite extends JPanel{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public Startseite() {
+		setSize(200, 400);
+		setBackground(Color.BLACK);
+		setLayout(null);
+		
+		JButton start = new JButton("START");
+		start.setBounds(350, 390, 200, 40);
+		JButton instruction = new JButton("INSTRUCTIONS");
+		instruction.setBounds(350,430,200,40);
+		add(start);
+		add(instruction);
+		
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+}

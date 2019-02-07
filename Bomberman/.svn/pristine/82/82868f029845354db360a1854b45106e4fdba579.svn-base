@@ -1,0 +1,137 @@
+package bomberman.prototype;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+
+import com.sun.glass.events.KeyEvent;
+
+public class Game implements Runnable {
+	
+	//Keyboard mapping fuer Spieler
+	private final int[] mapping1 = {KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D, KeyEvent.VK_ESCAPE};
+	private final int[] mapping2 = {KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_ESCAPE};
+
+	//Spieler erstellen; Testcode
+	Player myPlayer = new Player(this,0,0,mapping1,20);
+	Player myPlayer2 = new Player(this,100,100,mapping2,20);
+	
+	KeyboardControl keyboard = new KeyboardControl(); // polling
+	
+	private Display gameDisplay;
+	private int width, height;
+	private String title;
+	
+	//True wenn init() ausgefuehrt wurde
+	boolean running = false;
+	
+	private BufferStrategy bufferStrat; //Wieviele Bilder gebuffert werden
+	private Graphics graphics; //Mit dem Objekt zeichnen wir
+	
+	Thread myThread;
+	
+	public Game(String title, int width, int height){
+		this.width = width;
+		this.height = height;
+		this.title = title;
+	}
+	
+	//Game Loop besteht aus update() und render(), werden im run() thread aufgerufen
+	//http://gameprogrammingpatterns.com/game-loop.html
+	
+	//Alles einmalig auszufuehrende
+	private void init() {
+		gameDisplay = new Display(title, width, height);
+		gameDisplay.getJFrame().addKeyListener(keyboard);
+	}
+	
+	//Aktualisiert Daten
+	private void update() {
+		keyboard.poll();
+		myPlayer.update();
+		myPlayer2.update();
+		
+		//DEBUG für Richtung + Koordinaten
+		myPlayer.printDebug();
+
+	}
+	
+	//Zeichnet den Bildschirm neu
+	private void render() {
+		bufferStrat = gameDisplay.getCanvas().getBufferStrategy(); //BufferStrategy setzen
+		
+		//Falls wir keine BufferStrategy haben, setzen wir eine
+		if(bufferStrat == null) {
+			gameDisplay.getCanvas().createBufferStrategy(2); //Wieviele Buffer (inkl. Front-Buffer); Ausprobieren (2-3)
+			return;
+		}
+		
+		graphics = bufferStrat.getDrawGraphics();
+		graphics.clearRect(0, 0, gameDisplay.getWidth(), gameDisplay.getHeight()); //Bildschirm auffrischen
+		
+		//Testcode fuer Spieler (spawn funktion spaeter?)
+		graphics.fillRect(myPlayer.getX(), myPlayer.getY(), 20, 20);
+		graphics.setColor(Color.red);
+		graphics.fillRect(myPlayer2.getX(), myPlayer2.getY(), 20, 20);
+		
+		//Zeige Aenderungen an
+		bufferStrat.show();
+		graphics.dispose();
+	}
+	
+	//Thread für update() und render()
+	@Override
+	public void run() {
+		init();
+		
+		while(running) {
+			update();
+			render();
+	        try {
+				Thread.sleep(2); //erste Version des Timings
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
+	
+	//Thread starten, synchronized stellt sicher dass nichts anderes zugreift
+	//http://www.straub.as/java/threads/synchronized.html
+	
+	public synchronized void start() {
+		
+		//Nur start wenn das Programm noch nicht laeuft
+		if(!running){
+			running = true;
+			//Erstellt einen neuen Thread der Game Klasse
+			myThread = new Thread(this);
+			
+			//Der gestartete Thread ruft die run() methode auf, die immer implementiert werden muss
+			myThread.start();
+		} else {
+			return;
+		}
+	}
+	
+	public synchronized void stop() {
+		
+		//Nur stop wenn das Programm noch laeuft
+		if(running) {
+			running = false;
+			//stoppt den Thread; wirft exception bei Fehler
+			try {
+				myThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else {
+			return;
+		}
+	}
+	
+	//Zur Verwendung in Player Klasse
+	public KeyboardControl getKeyboardControl() {
+		return keyboard;
+	}
+}

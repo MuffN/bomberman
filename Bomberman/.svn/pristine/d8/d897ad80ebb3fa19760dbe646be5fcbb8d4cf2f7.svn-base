@@ -1,0 +1,96 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
+
+import bomberman.entities.MenuPanel;
+import bomberman.tools.Asset;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+public class Instructions extends MenuPanel implements ActionListener {
+
+	private static final long serialVersionUID = 1L;
+
+	private static String[] buttonNames = { "GO BACK" };
+	private JButton[] instructionbutton;
+	private JLabel firstplayerLabel;
+	private JLabel secondplayerLabel;
+	private JLabel movementLabel;
+	private JLabel placementLabel;
+
+	public Instructions() {
+		
+		super(buttonNames);
+
+		firstplayerLabel = new JLabel("PLAYER 1");
+		firstplayerLabel.setForeground(Color.YELLOW);
+		firstplayerLabel.setBounds(85, 150, 300, 50);
+		firstplayerLabel.setFont(Asset.pcsenior.deriveFont(24f));
+		
+		secondplayerLabel = new JLabel("PLAYER 2");
+		secondplayerLabel.setForeground(Color.YELLOW);
+		secondplayerLabel.setBounds(620, 150, 300, 50);
+		secondplayerLabel.setFont(Asset.pcsenior.deriveFont(24f));
+		
+		movementLabel = new JLabel("MOVEMENT", SwingConstants.CENTER);
+		movementLabel.setForeground(Color.YELLOW);
+		movementLabel.setBounds(250, 260, 400, 40);
+		movementLabel.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		placementLabel = new JLabel("PLACE BOMB", SwingConstants.CENTER);
+		placementLabel.setForeground(Color.YELLOW);
+		placementLabel.setBounds(250, 380, 400, 40);
+		placementLabel.setFont(Asset.pcsenior.deriveFont(20f));
+		
+		instructionbutton = super.getMenubuttons();
+		
+		//setting the Bounds separately
+		instructionbutton[0].setBounds(250, 600, 400, 40);
+		
+		//adding instructionbutton separately
+		add(instructionbutton[0]);
+
+		add(firstplayerLabel);
+		add(secondplayerLabel);
+		add(movementLabel);
+		add(placementLabel);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+
+		if ("GO BACK".equals(ae.getActionCommand())) {
+			DynaMineGui.changeToStart();
+		}
+	}
+
+	public void setFocusFirst() {
+		instructionbutton[0].requestFocusInWindow();
+	}
+
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.instructions, 0, 0, null);
+	}
+
+	@Override
+	protected void setTheBounds(int i) {
+		//do nothing to set the Bounds separately
+	}
+	
+	@Override
+	protected void addTheButtons(){
+		//do nothing to add the buttons after setting the Bounds
+	}
+}

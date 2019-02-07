@@ -1,0 +1,79 @@
+package bomberman.prototype;
+
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+public class Map {
+	//in Bearbeitung	
+	@SuppressWarnings("unused")
+	private int koordinate [][] =  {{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+						   			{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,0,1,2,1,0,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,2,0,2,0,0,0,0,1},
+									{1,2,1,0,1,2,1,0,1,2,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,0,1,0,1,0,1,0,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,2,1,2,1,0,1,2,1,2,1,2,1},
+									{1,0,0,2,0,2,0,2,0,2,2,2,0,0,1},
+									{1,0,1,2,1,2,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}};
+									
+	@SuppressWarnings("unused")
+	private BufferedImage nzg, zg, pfad;
+	
+	public Map(){	
+
+	}
+	
+	public void init() {
+		
+		//Hier wird die karte gezeichnet
+		
+		//-TESTCODE IMAGES (hinterlegt die Bilder unter den Variablennamen)
+		try {
+			nzg = ImageIO.read(Map.class.getResource("/images/nzg.png"));
+			zg = ImageIO.read(Map.class.getResource("/images/zg.png"));
+			pfad = ImageIO.read(Map.class.getResource("/images/pfad.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.print(e.getMessage());
+			e.printStackTrace();
+		}
+		//-TESTCODE IMAGES
+		/*
+		for (int i=0; i<13; i++){
+			
+			for (int j=0; j<15; j++){
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(nzg, 0, 0, null);
+				}
+				
+				if(koordinate[i][j] == 0){
+					
+				
+				}
+				
+				if(koordinate[i][j] == 2){
+					
+				}
+				
+			}
+		}
+		*/
+	}
+	
+	public void update() {
+		//Hier werden dann gegenstände aus der Map entfernt
+	}
+	
+	public void render(Graphics graphics,int x, int y) {
+		//nur Beispiel, erster Parameter sagt welches Bild gezeichnet wird
+		graphics.drawImage(zg, x, y, null);
+	}
+}

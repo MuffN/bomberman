@@ -1,0 +1,91 @@
+package bomberman.menu;
+
+import java.io.IOException;
+import java.io.Serializable;
+
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+/**
+ * 
+ * @author Patrick Schneider
+ *
+ */
+
+public class MasterController implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
+	@FXML
+	BorderPane mainPane;
+
+	@FXML
+	Pane mainGUICenter;
+
+	private transient Scene RootScene;
+	private transient Scene StartScene;
+	private transient Scene PlayerScene;
+	private transient Scene BotScene;
+
+	private transient Stage gameStage;
+
+	private transient static MasterController instance;
+
+	public static MasterController getInstance() {
+		if (instance == null) {
+			instance = new MasterController();
+		}
+		return instance;
+	}
+
+	public static void initialize(Stage gameStage) {
+		buildScenes(gameStage);
+		gameStage.setScene(getInstance().RootScene);
+		getInstance().gameStage.setScene(getInstance().StartScene);
+		gameStage.show();
+
+	}
+
+	private static void buildScenes(Stage gameStage) {
+		getInstance().gameStage = gameStage;
+
+		try {
+
+			FXMLLoader startMenuLoader = new FXMLLoader(getInstance().getClass().getResource("StartMenu.fxml"));
+			Parent startMenuRoot = startMenuLoader.load();
+			gameStage.setTitle("DynaMine");
+			getInstance().StartScene = new Scene(startMenuRoot);
+
+			FXMLLoader playerMenuLoader = new FXMLLoader(getInstance().getClass().getResource("PlayerMenu.fxml"));
+			Parent playerMenuRoot = playerMenuLoader.load();
+			getInstance().PlayerScene = new Scene(playerMenuRoot);
+
+			FXMLLoader BotMenuLoader = new FXMLLoader(getInstance().getClass().getResource("BotMenu.fxml"));
+			Parent botMenuRoot = BotMenuLoader.load();
+			getInstance().BotScene = new Scene(botMenuRoot);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void changeSceneToStartMenu() {
+		getInstance().gameStage.setScene(getInstance().StartScene);
+		getInstance().gameStage.show();
+	}
+	public static void changeSceneToPlayerConfig() {
+		getInstance().gameStage.setScene(getInstance().PlayerScene);
+		getInstance().gameStage.show();
+	}
+	public static void changeSceneToBotConfig() {
+		getInstance().gameStage.setScene(getInstance().BotScene);
+		getInstance().gameStage.show();
+	}
+	
+
+}

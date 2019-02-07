@@ -1,0 +1,228 @@
+package bomberman.prototype;
+
+import bomberman.entities.Bot;
+import bomberman.entities.Player;
+import bomberman.input.KeyboardControl;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
+import com.sun.glass.events.KeyEvent;
+
+/**
+ * The main class for project bomberman
+ * all game related objects are registered in this class
+ * render() and update() methods of registered objects are executed inside
+ * the game render() and update() method of the game class
+ * 
+ * @author Lukas Pruetzel
+ * 
+ */
+
+public class Game implements Runnable {
+	
+	/**
+	 * Keyboard mapping for player 1
+	 */
+	private final int[] mapping1 = {KeyEvent.VK_W, KeyEvent.VK_A, KeyEvent.VK_S, KeyEvent.VK_D, KeyEvent.VK_ESCAPE, KeyEvent.VK_SPACE};
+	
+	/**
+	 * Keyboard mapping for player 2
+	 */
+	private final int[] mapping2 = {KeyEvent.VK_UP, KeyEvent.VK_LEFT, KeyEvent.VK_DOWN, KeyEvent.VK_RIGHT, KeyEvent.VK_ESCAPE, KeyEvent.VK_NUMPAD0};
+
+	/**
+	 * Player 1 object
+	 */
+	Player myPlayer = new Player(this,60,60,mapping1,60,1);
+	
+	/**
+	 * Player 2 object
+	 */
+	Player myPlayer2 = new Player(this,780,60,mapping2,60,2);
+	
+	/**
+	 * KeyboardControl object used for retrieving pressed keys
+	 */
+	KeyboardControl keyboard = new KeyboardControl(); // polling
+	
+	/**
+	 * Map object used for rendering
+	 */
+	private Map myMap = new Map();
+	
+	/**
+	 * Display object used for canvas drawing
+	 */
+	private Display gameDisplay;
+	
+	/**
+	 * Game title as string
+	 */
+	private String title;
+	
+	/**
+	 * Game screen width in pixel
+	 */
+	private int width;
+	
+	/**
+	 * Game screen height in pixel
+	 */
+	private int height;
+	
+	/**
+	 * Determines if the game is already running
+	 */
+	boolean running = false;
+	
+	/**
+	 * Graphics related objects
+	 */
+	private BufferStrategy bufferStrat; //Amount of pictures to be buffered
+	private Graphics graphics; //Object to draw with
+	
+	/**
+	 * game thread
+	 */
+	Thread myThread;
+	
+	/**
+	 * Game constructor, passes all variables into the Display constructor
+	 * @param title The title of the game window
+	 * @param width Width of the game in pixel
+	 * @param height Height of the game in pixel
+	 */
+	
+	
+	
+	Bot myBot = new Bot(this,60,60,60 );
+	
+	
+	public Game(String title, int width, int height){
+		this.width = width;
+		this.height = height;
+		this.title = title;
+	}
+	
+	//Game Loop consists of update() and render(), called in run() thread
+	//http://gameprogrammingpatterns.com/game-loop.html
+	
+	/**
+	 * init() is called once at the start of the game thread in the run() method
+	 */
+	private void init() {
+		gameDisplay = new Display(title, width, height);
+		gameDisplay.getJFrame().addKeyListener(keyboard);
+		
+		myPlayer.init();
+		myPlayer2.init();
+		myMap.init();
+		myBot.init();
+	}
+	
+	/**
+	 * updates the status of all "attached" objects
+	 * such as the keyboard, various players (and bots)
+	 * as well as map related information
+	 */
+	private void update() {
+		keyboard.poll();
+		myPlayer.update();
+		myPlayer2.update();
+		myBot.update();
+		
+		//DEBUG for coordinates
+		myPlayer.printDebug();
+		myPlayer2.printDebug();
+	}
+	
+	/**
+	 * renders all "attached" objects
+	 * such as players (and bots)
+	 * as well as the map
+	 */
+	private void render() {
+		bufferStrat = gameDisplay.getCanvas().getBufferStrategy(); //give Display a BufferStrategy
+		
+		if(bufferStrat == null) {
+			gameDisplay.getCanvas().createBufferStrategy(2); //Amount of Buffers (incl. Front-Buffer); Use 2 or 3
+			return;
+		}
+		
+		graphics = bufferStrat.getDrawGraphics();
+		
+		//graphics.clearRect(0, 0, gameDisplay.getWidth(), gameDisplay.getHeight()); //Refresh screen
+		
+		myMap.render(graphics);
+		
+		myPlayer.render(graphics);
+		myPlayer2.render(graphics);
+		
+		myBot.render(graphics);
+		
+		//Show new changes
+		bufferStrat.show();
+		graphics.dispose();
+	}
+	
+	/**
+	 * implemented function from runnable
+	 * gets called when a thread is initialized 
+	 */
+	@Override
+	public void run() {
+		init();
+		
+		while(running) {
+			update();
+			render();
+	        try {
+				Thread.sleep(5); //first Version for timing
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} 
+		}
+	}
+	
+	//Start Thread starten; synchronized to avoid access problems
+	//http://www.straub.as/java/threads/synchronized.html
+	
+	/**
+	 * initialized the thread if the game is not already running
+	 */
+	public synchronized void start() {
+		
+		if(!running){
+			running = true;
+			
+			myThread = new Thread(this);
+			myThread.start();
+		} else {
+			return;
+		}
+	}
+	
+	/**
+	 * stops the thread if the game is not already stopped
+	 */
+	public synchronized void stop() {
+		
+		if(running) {
+			running = false;
+			try {
+				myThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			return;
+		}
+	}
+	
+	/**
+	 * returns the KeyboardControl class to access pressed keys
+	 * @return KeyboardControl class with pressed keys
+	 */
+	public KeyboardControl getKeyboardControl() {
+		return keyboard;
+	}
+}

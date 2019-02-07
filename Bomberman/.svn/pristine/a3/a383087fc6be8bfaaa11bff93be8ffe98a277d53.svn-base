@@ -1,0 +1,46 @@
+package bomberman.prototype;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+
+public class StartMenuController {
+	
+	private Game myGame;
+
+	@FXML
+	private ListView<String> lv_StartMenu;
+
+	public void handleKey() {
+		lv_StartMenu.setOnKeyPressed(event -> {
+			if (event.getCode() == KeyCode.ENTER) {
+				System.out.println(lv_StartMenu.getSelectionModel().getSelectedItem());
+				switch (lv_StartMenu.getSelectionModel().getSelectedItem()) {
+				case "START":
+					//create Game object and set Title
+					this.myGame = new Game("Bomberman", Launcher.gameWidth, Launcher.gameHeight);
+					//generates a game thread and starts the game
+					this.myGame.start();
+					break;
+
+				case "INSTRUCTIONS":
+
+					break;
+
+				case "CREDITS":
+
+					break;
+					
+				case "QUIT GAME":
+					
+					break;
+
+				default:
+					break;
+				}
+			}
+		});
+	}
+
+
+}

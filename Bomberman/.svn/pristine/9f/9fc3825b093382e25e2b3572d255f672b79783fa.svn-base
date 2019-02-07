@@ -1,0 +1,165 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.util.ArrayList;
+import java.util.List;
+
+import bomberman.maingame.Map;
+import bomberman.tools.Asset;
+
+public class Bomb {
+
+	private int x, y, timer;
+	private Rectangle bombRect = null;
+
+	private enum Direction {
+		NORTH, EAST, SOUTH, WEST
+	}
+
+	private List<Rectangle> explosionList = new ArrayList<Rectangle>();
+	
+	public static List <Bomb> bombList = new ArrayList<Bomb>(); 
+
+	private boolean explosionHappend = false;
+
+	public Bomb(int x, int y) {
+		this.x = x;
+		this.y = y;
+		this.timer = 180;
+		bombRect = new Rectangle(x, y, 60, 60);
+		this.init();
+	}
+
+	public Rectangle getBombRect() {
+		return bombRect;
+	}
+
+	public void init() {
+		Bomb.bombList.add(this);
+	}
+
+	public boolean decreaseTimer() {
+
+		if (timer <= 0) {
+			
+			Bomb.bombList.remove(this);
+			Map.blastList.removeAll(explosionList);
+			
+			return false;
+		} else if (timer <= 60 && explosionHappend == false) {
+			explosionHappend = true;
+			explosion();
+			Bomb.bombList.remove(this);
+		}
+
+		timer--;
+		return true;
+
+	}
+
+	public void render(Graphics graphics) {
+
+		if (timer >= 60) {
+
+			graphics.drawImage(Asset.bomb_debug, x, y, null);
+		}
+
+		else if (timer >= 0) { // expl happend
+
+			for (Rectangle r : explosionList) {
+
+				graphics.drawImage(Asset.explosion, (int) r.getX(), (int) r.getY(), null);
+
+			}
+
+			graphics.drawImage(Asset.explosion, x, y, null);
+		}
+
+	}
+
+	private void explosion() {
+		explosionList.add(new Rectangle(x, y, 60, 60));
+		blast(Direction.NORTH);
+		blast(Direction.SOUTH);
+		blast(Direction.EAST);
+		blast(Direction.WEST);
+		Map.blastList.addAll(explosionList);
+
+	}
+
+	private void blast(Direction d) {
+
+		int blastX = x;
+		int blastY = y;
+
+		for (int i = 0; i < 2; i++) {
+
+			switch (d) {
+
+			case NORTH:
+				blastY -= 60;
+				break;
+
+			case WEST:
+				blastX -= 60;
+				break;
+
+			case SOUTH:
+				blastY += 60;
+				break;
+
+			case EAST:
+				blastX += 60;
+				break;
+
+			default:
+				System.out.println("ERROR BLAST");
+				return;
+
+			}
+			Rectangle blastRect = new Rectangle(blastX, blastY, 60, 60);
+			// boolean canPlaceBlast = true;
+
+			for (Rectangle e : Map.nzgList) {
+
+				if (e.intersects(blastRect)) {
+					// canPlaceBlast=false;
+					return;
+				}
+
+			}
+
+			for (Rectangle e : Map.zgList) {
+
+				if (e.intersects(blastRect)) {
+					explosionList.add(new Rectangle(blastX, blastY, 60, 60));
+					Map.zgList.remove(e);
+					e=null;
+					Map.koordinate[(int) (blastRect.getY()/60)][(int) (blastRect.getX()/60)] = 0;
+					return;
+				}
+
+			}
+
+			explosionList.add(new Rectangle(blastX, blastY, 60, 60));
+			for (Bomb e : Bomb.bombList) {
+				if (e.getBombRect().intersects(blastRect)) {
+					e.trigger();
+					
+				}
+				
+				
+			}
+		}
+	
+
+	}
+	public void trigger() {
+		timer = 60;
+	
+		
+	}
+
+
+}

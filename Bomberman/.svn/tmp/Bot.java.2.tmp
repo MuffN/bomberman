@@ -1,0 +1,113 @@
+package bomberman.entities;
+
+import java.awt.Graphics;
+import java.awt.Rectangle;
+
+import bomberman.maingame.Game;
+import bomberman.tools.Asset;
+
+public class Bot extends Character {
+
+	
+
+	public Bot(Game game, int x, int y, int size) {
+		super(game, x, y, size);
+		this.setMyRect(new Rectangle(x, y, size, size));
+		Character.characterList.add(this);
+		this.init();
+		Character.characterList.add(this);
+	}
+
+	// BOT CODE HERE
+	@Override
+	public void update() {
+
+		this.getMyRect().setLocation(getNextX(), getNextY());
+		if (!this.checkNZGCollision(this.getMyRect())) {
+			this.move();
+		}
+		// else {
+		// myRect.setLocation(getX(), getY());
+		// resetNextXY();
+		// }
+
+	}
+
+	// 2 Player 1Bot
+	public Player nextEnemy(Player myPlayer, Player myPlayer2) {
+
+		int posBot = getX() + getY();
+		int distance1 = myPlayer.getX() + myPlayer.getY();
+		int distance2 = myPlayer2.getX() + myPlayer2.getY();
+		if (Math.abs(posBot - distance1) < Math.abs(posBot - distance2)) {
+			return myPlayer;
+		} else
+			return myPlayer2;
+
+	}
+
+	public void moveToEnemy(Player enemy) {
+
+		int xEnemy = enemy.getX(), yEnemy = enemy.getY();
+		int x = getX(), y = getY();
+		int dX = x - xEnemy, dY = y - yEnemy; // distance x,y
+
+		if (dX > 60) {
+			left();
+			if (this.checkNZGCollision(this.getMyRect())) {
+
+				
+				this.getMyRect().setLocation(getX(), getY());
+				resetNextXY();
+				up();
+				System.out.println("left");
+			}
+
+		}
+
+		else if (dX < -60) {
+			right();
+			if (this.checkNZGCollision(this.getMyRect())) {
+				
+				this.getMyRect().setLocation(getX(), getY());
+				resetNextXY();
+				System.out.println("right");
+				up();
+			}
+
+		}
+
+		else if (dY > 60) {
+			up();
+			if (this.checkNZGCollision(this.getMyRect())) {
+			
+				this.getMyRect().setLocation(getX(), getY());
+				resetNextXY();
+				System.out.println("up");
+				left();
+			}
+
+		}
+
+		else if (dY < -60) {
+			down();
+			if (this.checkNZGCollision(this.getMyRect())) {
+				
+				this.getMyRect().setLocation(getX(), getY());
+				resetNextXY();
+				System.out.println("down");
+				left();
+			}
+
+		}
+	}
+
+	public void render(Graphics graphics) {
+		graphics.drawImage(Asset.p2_debug, getX(), getY(), null);
+	}
+
+	public void init() {
+		this.resetNextXY();
+	}
+	
+}

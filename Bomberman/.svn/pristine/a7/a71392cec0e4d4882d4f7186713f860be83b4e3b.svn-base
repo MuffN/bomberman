@@ -1,0 +1,104 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JPanel;
+import javax.swing.JButton;
+
+public class SingleplayerBotmenu extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private JButton[] singleplayerBotbuttons;
+	private static String[] buttonNames = { "1 BOT", "2 BOTS", "3 BOTS", "GO BACK", "QUIT GAME" };
+
+	public SingleplayerBotmenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+
+		singleplayerBotbuttons = new JButton[buttonNames.length];
+		for (int i = 0; i < buttonNames.length; i++) {
+
+			final int curButton = i;
+
+			singleplayerBotbuttons[i] = new JButton(buttonNames[i]);
+			singleplayerBotbuttons[i].addActionListener(this);
+			singleplayerBotbuttons[i].setActionCommand(buttonNames[i]);
+			singleplayerBotbuttons[i].addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyPressed(KeyEvent e) {
+					switch (e.getKeyCode()) {
+					case KeyEvent.VK_UP:
+						if (curButton > 0) {
+							singleplayerBotbuttons[curButton].setBackground(Color.BLACK);
+							singleplayerBotbuttons[curButton - 1].requestFocus();
+							singleplayerBotbuttons[curButton - 1].setBackground(Color.CYAN);
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if (curButton < 3) {
+							singleplayerBotbuttons[curButton].setBackground(Color.BLACK);
+							singleplayerBotbuttons[curButton + 1].requestFocus();
+							singleplayerBotbuttons[curButton + 1].setBackground(Color.CYAN);
+						}
+						break;
+					default:
+						break;
+					}
+
+				}
+			});
+			singleplayerBotbuttons[i].setBorder(null);
+			singleplayerBotbuttons[i].setBackground(Color.BLACK);
+			singleplayerBotbuttons[i].setFocusPainted(false);
+			singleplayerBotbuttons[i].setFont(new Font("Arial", Font.PLAIN, 24));
+		}
+
+		singleplayerBotbuttons[0].setBounds(350, 390, 200, 40);
+		singleplayerBotbuttons[1].setBounds(350, 430, 200, 40);
+		singleplayerBotbuttons[2].setBounds(350, 470, 200, 40);
+		singleplayerBotbuttons[3].setBounds(350, 510, 200, 40);
+		singleplayerBotbuttons[4].setBounds(350, 550, 200, 40);
+
+		singleplayerBotbuttons[0].setBackground(Color.CYAN);
+
+		for (int j = 0; j < buttonNames.length; j++) {
+			add(singleplayerBotbuttons[j]);
+		}
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900, 780);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent ae){
+		if("1 BOT".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 1);
+		}
+		if("2 BOTS".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 2);
+		}
+		if("3 BOTS".equals(ae.getActionCommand())){
+			DynaMineGui.changeToGame(1, 3);
+		}
+		if("GO BACK".equals(ae.getActionCommand())){
+			DynaMineGui.changeToPlayerMenu();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+		
+		
+	}
+}

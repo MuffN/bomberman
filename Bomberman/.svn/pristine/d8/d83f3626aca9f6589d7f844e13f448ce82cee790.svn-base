@@ -1,0 +1,55 @@
+package bomberman.prototype;
+
+
+public class Player extends Character{
+	
+	//Speichert die Tastaturbelegung
+	private final int[] mapping;
+	
+	//Debugging
+	private int lastX, lastY;
+	
+	Player (Game game, int x, int y, int[] mapping, int playerSize) {
+		//Konstrutor der Oberklasse
+		super(game, x, y, playerSize);
+		this.mapping = mapping;
+	}
+	
+	//Spielfigur bewegen
+	@Override
+	public void update() {
+		if(getGame().getKeyboardControl().keyDown(mapping[0]) ) {
+			up();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[1])) {
+			left();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[2])) {
+			down();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[3])) {
+			right();
+		}
+		if (getGame().getKeyboardControl().keyDown(mapping[4])) {
+			//Spiel beenden wenn ESC gedrueckt wird
+			System.exit(0);
+		}
+	}
+	
+	//Gibt X/Y im Array zurueck
+	public int[] getPosition(){
+		int[] positionArr = new int[2];
+		positionArr[0] = getX();
+		positionArr[1] = getY();
+		return positionArr;
+	}
+	
+	//Debugging
+	public void printDebug() {
+		if(lastX != getX() || lastY != getY()) {
+			System.out.println(" (" + this.getX() + "/" + this.getY() + ")");
+			lastX = getX();
+			lastY = getY();
+		}
+	}
+}

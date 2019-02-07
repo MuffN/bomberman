@@ -1,0 +1,139 @@
+package bomberman.menu;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import bomberman.tools.Asset;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+
+public class EndMenu extends JPanel implements ActionListener{
+	/**
+	 * 
+	 * @author Patrick Schneider
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private JButton[] endmenubuttons;
+	private static String[] buttonNames = {"REPLAY","MENU","QUIT GAME"};
+	private ImageIcon blackBackground = new ImageIcon(Asset.button_background_blank);
+	private ImageIcon arrowBackground = new ImageIcon(Asset.button_background_arrow);
+	
+	
+	public EndMenu() {
+		setSize(getPreferredSize());
+		setBackground(Color.BLACK);
+		setLayout(null);
+		
+		endmenubuttons = new JButton[buttonNames.length];
+		
+		
+		
+		for(int i = 0; i < buttonNames.length; i++){
+
+			final int curButton = i;
+			
+			endmenubuttons[i] = new JButton(buttonNames[i]);
+			endmenubuttons[i].setFocusable(true);
+			endmenubuttons[i].setMargin(new Insets(0, 0, 0, 0));
+			endmenubuttons[i].setContentAreaFilled(false);
+			endmenubuttons[i].setIcon(blackBackground);
+			endmenubuttons[i].setOpaque(false);
+			endmenubuttons[i].setForeground(Color.YELLOW);
+			endmenubuttons[i].setHorizontalTextPosition(SwingConstants.CENTER);
+			endmenubuttons[i].addActionListener(this);
+			endmenubuttons[i].setActionCommand(buttonNames[i]);
+			endmenubuttons[i].addKeyListener(new KeyAdapter(){
+				@Override
+				public void keyPressed(KeyEvent e){
+					switch (e.getKeyCode()){
+					case KeyEvent.VK_UP:
+						if(curButton > 0){
+							endmenubuttons[curButton - 1].requestFocusInWindow();
+						}
+						break;
+					case KeyEvent.VK_DOWN:
+						if(curButton < 3){
+							endmenubuttons[curButton + 1].requestFocusInWindow();
+						}
+						break;
+					default:
+						break;
+					}
+					
+				}
+			});
+			endmenubuttons[i].addFocusListener(new FocusListener() {
+
+		         @Override
+		         public void focusLost(FocusEvent arg0) {
+		        	endmenubuttons[curButton].setForeground(Color.YELLOW);
+		            endmenubuttons[curButton].setIcon(blackBackground);
+		         }
+
+		         @Override
+		         public void focusGained(FocusEvent arg0) {
+		        	 endmenubuttons[curButton].setForeground(Color.RED);
+		            endmenubuttons[curButton].setIcon(arrowBackground);
+		         }
+		      });
+			endmenubuttons[i].setBorder(null);
+			endmenubuttons[i].setBackground(Color.BLACK);
+			endmenubuttons[i].setFocusPainted(false);
+			endmenubuttons[i].setFont(Asset.pcsenior);
+		}
+		
+		endmenubuttons[0].setBounds(300, 390, 300, 40);
+		endmenubuttons[1].setBounds(300, 430, 300, 40);
+		endmenubuttons[2].setBounds(300, 470, 300, 40);
+
+		
+		endmenubuttons[0].requestFocusInWindow();
+		
+		for (int j = 0; j < buttonNames.length; j++){
+			add(endmenubuttons[j]);
+		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		return new Dimension(900,780);
+	}
+	
+	@Override
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		g.drawImage(Asset.menu_background, 0, 0, null);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent ae) {
+		
+		if("REPLAY".equals(ae.getActionCommand())){
+			DynaMineGui.changeToSingleplayerBot();
+		}
+		if("MENU".equals(ae.getActionCommand())){
+			DynaMineGui.changeToStart();
+		}
+		if("QUIT GAME".equals(ae.getActionCommand())){
+			DynaMineGui.changeToExit();
+		}
+	}
+	
+	public void setFocusFirst(){
+		endmenubuttons[0].requestFocusInWindow();
+	}
+}

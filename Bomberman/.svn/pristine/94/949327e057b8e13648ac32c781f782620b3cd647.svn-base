@@ -1,0 +1,116 @@
+package bomberman.maingame;
+
+import java.awt.Canvas;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+
+/**
+ * Display class to be used in Game class
+ * Sets up a JFrame containing a canvas
+ * allows drawing to the screen and generally
+ * setting up a window
+ * 
+ * @author Lukas Pruetzel
+ *
+ */
+
+public class Display {
+
+	/**
+	 * canvas used as a drawing board
+	 */
+	private Canvas canvas;
+	
+	/**
+	 * JFrame to contain our canvas
+	 */
+	private JFrame frame;
+
+	/**
+	 * Game title as string
+	 */
+	private String title;
+	/**
+	 * Game screen width in pixel
+	 */
+	private int width;
+	
+	/**
+	 * Game screen height in pixel
+	 */
+	private int height;
+	
+	/**
+	 * Display constructor, provides drawing space
+	 * @param title The title of the game window
+	 * @param width Width of the game in pixel
+	 * @param height Height of the game in pixel
+	 */
+	public Display(String title, int width, int height){
+		this.title = title;
+		this.width = width;
+		this.height = height;
+		
+		createDisplay();
+	}
+	
+	/**
+	 * creates our display
+	 * by setting up a JFrame and
+	 * packing it with the canvas object
+	 */
+	private void createDisplay(){
+		frame = new JFrame(title);
+		frame.setSize(width, height);
+		
+		//Window can be closed with X button
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setResizable(false);
+		
+		//Align window in screen center
+		//https://docs.oracle.com/javase/7/docs/api/java/awt/Window.html#setLocationRelativeTo(java.awt.Component)
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+		
+		canvas = new Canvas();
+		//set draw area to window size
+		canvas.setPreferredSize(new Dimension(width, height));
+		
+		//add canvas to frame and pack it together
+		//https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html
+		frame.add(canvas);
+		frame.pack();
+	}
+	
+	/**
+	 * Canvas getter
+	 * @return returns the canvas object
+	 */
+	public Canvas getCanvas(){
+		return canvas;
+	}
+	
+	/**
+	 * JFrame getter for usage in game class
+	 * @return returns the JFrame containing the canvas
+	 */
+	public JFrame getJFrame(){
+		return frame;
+	}
+	
+	/**
+	 * Width getter
+	 * @return returns the game width in pixel
+	 */
+	public int getWidth() {
+		return this.width;
+	}
+	
+	/**
+	 * Height getter
+	 * @return returns the game height in pixel
+	 */
+	public int getHeight() {
+		return this.height;
+	}
+}

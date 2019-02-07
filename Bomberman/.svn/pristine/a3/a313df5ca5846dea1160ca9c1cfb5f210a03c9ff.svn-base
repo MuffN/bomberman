@@ -1,0 +1,81 @@
+package bomberman.maingame;
+
+import java.awt.Graphics;
+import bomberman.tools.Asset;
+
+/**
+ * Map class
+ * stores all map relevant data
+ * such as borders and various kinds of scattered
+ * objects
+ * 
+ * @author Orkun Somali
+ *
+ */
+
+public class Map {
+	
+	private int x, y;
+	
+	
+	
+	//in Bearbeitung	
+	
+	private int koordinate [][] =  {
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+						   			{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,0,1,2,1,0,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,2,0,2,0,0,0,0,1},
+									{1,2,1,0,1,2,1,0,1,2,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,0,1,0,1,0,1,0,1,0,1,2,1},
+									{1,2,0,2,2,2,0,0,0,2,2,2,0,2,1},
+									{1,2,1,2,1,2,1,0,1,2,1,2,1,2,1},
+									{1,0,0,2,0,2,0,2,0,2,2,2,0,0,1},
+									{1,0,1,2,1,2,1,0,1,2,1,0,1,0,1},
+									{1,0,0,2,2,2,0,0,0,2,0,0,0,0,1},
+									{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+									};
+									
+	public Map(){	
+
+	}
+	
+	public void init() {
+		
+	}
+	
+	public void update() {
+		//Hier werden dann gegenst�nde aus der Map entfernt
+	}
+	
+	public void render(Graphics graphics) {
+		//nur Beispiel, erster Parameter sagt welches Bild gezeichnet wird
+		for (int i=0; i<13; i++){
+			
+			x=0;
+			for (int j=0; j<15; j++){
+				
+				
+				if(koordinate[i][j] == 1){
+					graphics.drawImage(Asset.nzg, x, y, null);
+				}
+				
+				if(koordinate[i][j] == 0){
+					graphics.drawImage(Asset.pfad, x, y, null);
+				
+				}
+				
+				if(koordinate[i][j] == 2){
+					graphics.drawImage(Asset.zg, x, y, null);
+				}
+				x+=60;
+			}
+			
+			y+=60;
+			
+		}
+		y=0;
+		x=0;
+	}
+}
